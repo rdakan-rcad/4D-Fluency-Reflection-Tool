@@ -1,0 +1,2942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Delegation &amp; Diligence Discussion Tool</title>
+<style>
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --gold: #FFD100;
+  --black: #000000;
+  --white: #FFFFFF;
+  --dark-gray: #333333;
+  --light-gray: #F5F5F5;
+  --medium-gray: #E0E0E0;
+  --delegation-blue: #2B6CB0;
+  --diligence-red: #C53030;
+  --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  font-family: var(--font-stack);
+  font-size: 16px;
+  color: var(--dark-gray);
+  background: var(--light-gray);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* Header */
+.header {
+  background: var(--black);
+  padding: 0;
+}
+.header-bar {
+  height: 6px;
+  background: var(--gold);
+}
+.header-content {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.header-logo {
+  color: var(--gold);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Main */
+.main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* Progress Indicator */
+.progress {
+  margin-bottom: 32px;
+}
+.progress-desktop {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  position: relative;
+}
+.progress-mobile {
+  display: none;
+  font-size: 14px;
+  color: var(--dark-gray);
+  text-align: center;
+  padding: 8px 0;
+}
+.step-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  cursor: default;
+  padding: 0 2px;
+}
+.step-item.clickable {
+  cursor: pointer;
+}
+.step-item.clickable:hover .step-circle {
+  transform: scale(1.1);
+}
+.step-connector {
+  position: absolute;
+  top: 14px;
+  left: calc(50% + 16px);
+  right: calc(-50% + 16px);
+  height: 3px;
+  background: var(--medium-gray);
+  z-index: 0;
+}
+.step-connector.completed {
+  background: var(--gold);
+}
+.step-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  z-index: 1;
+  transition: transform 0.15s ease, background 0.2s ease;
+  border: 3px solid var(--medium-gray);
+  background: var(--white);
+  color: var(--dark-gray);
+  flex-shrink: 0;
+}
+.step-item.active .step-circle {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--black);
+}
+.step-item.completed .step-circle {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--black);
+}
+.step-label {
+  margin-top: 6px;
+  font-size: 9px;
+  text-align: center;
+  color: #999;
+  line-height: 1.3;
+}
+.step-item.active .step-label,
+.step-item.completed .step-label {
+  color: var(--dark-gray);
+  font-weight: 600;
+}
+.step-accent {
+  height: 3px;
+  width: 100%;
+  margin-top: 4px;
+  border-radius: 2px;
+}
+.step-item.active .step-accent.accent-delegation { background: var(--delegation-blue); }
+.step-item.active .step-accent.accent-diligence { background: var(--diligence-red); }
+.step-item.active .step-accent.accent-synthesis { background: var(--gold); }
+.step-item.completed .step-accent.accent-delegation { background: var(--delegation-blue); opacity: 0.4; }
+.step-item.completed .step-accent.accent-diligence { background: var(--diligence-red); opacity: 0.4; }
+.step-item.completed .step-accent.accent-synthesis { background: var(--gold); opacity: 0.4; }
+
+/* Cards */
+.card {
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+  padding: 40px;
+  margin-bottom: 24px;
+}
+
+/* Screen: Welcome */
+.welcome-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 4px;
+}
+.welcome-subtitle {
+  font-size: 16px;
+  color: var(--dark-gray);
+  margin-bottom: 24px;
+}
+.welcome-orientation {
+  font-size: 15px;
+  color: var(--dark-gray);
+  margin-bottom: 32px;
+  line-height: 1.7;
+}
+
+/* Section Headers */
+.section-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+.section-badge.delegation {
+  background: #EBF4FF;
+  color: var(--delegation-blue);
+}
+.section-badge.diligence {
+  background: #FFF5F5;
+  color: var(--diligence-red);
+}
+.section-badge.synthesis {
+  background: #FFFDE7;
+  color: #8B6914;
+}
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 8px;
+}
+.section-description {
+  font-size: 15px;
+  color: var(--dark-gray);
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+
+/* Form Elements */
+.field-group {
+  margin-bottom: 32px;
+}
+.field-group:last-of-type {
+  margin-bottom: 0;
+}
+.field-label {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--black);
+  margin-bottom: 6px;
+}
+.field-helper {
+  display: block;
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 10px;
+  line-height: 1.5;
+  font-style: italic;
+}
+input[type="text"],
+textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--medium-gray);
+  border-radius: 8px;
+  font-family: var(--font-stack);
+  font-size: 15px;
+  color: var(--dark-gray);
+  transition: border-color 0.15s ease;
+  background: var(--white);
+}
+input[type="text"]:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(255,209,0,0.15);
+}
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+textarea.large {
+  min-height: 140px;
+}
+textarea.short {
+  min-height: 60px;
+}
+
+/* Radio Buttons */
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 2px solid var(--medium-gray);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.radio-option:hover {
+  border-color: #ccc;
+  background: var(--light-gray);
+}
+.radio-option.selected {
+  border-color: var(--gold);
+  background: #FFFDE7;
+}
+.radio-option input[type="radio"] {
+  accent-color: var(--gold);
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.radio-option span {
+  font-size: 15px;
+}
+
+/* Inline Notes (conditional) */
+.inline-note {
+  display: none;
+  margin-top: 12px;
+  padding: 12px 16px;
+  background: #FFFDE7;
+  border-left: 4px solid var(--gold);
+  border-radius: 0 8px 8px 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--dark-gray);
+}
+.inline-note.visible {
+  display: block;
+}
+
+/* Selection Cards (Q8) */
+.card-select-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.card-select {
+  padding: 20px;
+  border: 2px solid var(--medium-gray);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+.card-select:hover {
+  border-color: #ccc;
+  background: var(--light-gray);
+}
+.card-select.selected {
+  border-color: var(--gold);
+  background: #FFFDE7;
+  box-shadow: 0 0 0 3px rgba(255,209,0,0.15);
+}
+.card-select-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 4px;
+}
+.card-select-desc {
+  font-size: 14px;
+  color: var(--dark-gray);
+  margin-bottom: 6px;
+}
+.card-select-examples {
+  font-size: 13px;
+  color: #777;
+  font-style: italic;
+}
+
+/* Buttons */
+.btn-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 32px;
+  gap: 12px;
+}
+.btn-row.center {
+  justify-content: center;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 28px;
+  font-family: var(--font-stack);
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.btn:active {
+  transform: scale(0.98);
+}
+.btn-primary {
+  background: var(--gold);
+  color: var(--black);
+}
+.btn-primary:hover {
+  background: #E6BC00;
+}
+.btn-primary:disabled {
+  background: var(--medium-gray);
+  color: #999;
+  cursor: not-allowed;
+}
+.btn-secondary {
+  background: transparent;
+  color: var(--dark-gray);
+  border: 2px solid var(--medium-gray);
+}
+.btn-secondary:hover {
+  background: var(--light-gray);
+}
+.btn-outline {
+  background: var(--white);
+  color: var(--dark-gray);
+  border: 2px solid var(--medium-gray);
+}
+.btn-outline:hover {
+  background: var(--light-gray);
+}
+
+/* ===== Brainstorm Ideas List ===== */
+.idea-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.idea-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: fadeIn 0.2s ease;
+}
+.idea-number {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--delegation-blue);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.idea-row input[type="text"] {
+  flex: 1;
+}
+.idea-remove {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #bbb;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: color 0.15s, background 0.15s;
+}
+.idea-remove:hover {
+  color: var(--diligence-red);
+  background: #FFF5F5;
+}
+.add-idea-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border: 2px dashed var(--medium-gray);
+  border-radius: 8px;
+  background: transparent;
+  font-family: var(--font-stack);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--delegation-blue);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  margin-top: 4px;
+}
+.add-idea-btn:hover {
+  border-color: var(--delegation-blue);
+  background: #EBF4FF;
+}
+.add-idea-btn:disabled {
+  color: #bbb;
+  border-color: var(--medium-gray);
+  cursor: not-allowed;
+  background: transparent;
+}
+.idea-counter {
+  font-size: 13px;
+  color: #999;
+  margin-top: 4px;
+}
+
+/* ===== Assess Ideas (per-idea cards) ===== */
+.assess-card {
+  background: var(--light-gray);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  border-left: 4px solid var(--delegation-blue);
+}
+.assess-card:last-child {
+  margin-bottom: 0;
+}
+.assess-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 4px;
+}
+.assess-card-text {
+  font-size: 14px;
+  color: var(--dark-gray);
+  margin-bottom: 16px;
+  padding: 8px 12px;
+  background: var(--white);
+  border-radius: 6px;
+  border: 1px solid var(--medium-gray);
+}
+.assess-sub-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--dark-gray);
+  margin-bottom: 6px;
+}
+.assess-field-group {
+  margin-bottom: 16px;
+}
+.assess-field-group:last-child {
+  margin-bottom: 0;
+}
+
+/* ===== Ranking ===== */
+.rank-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rank-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--white);
+  border: 2px solid var(--medium-gray);
+  border-radius: 10px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.rank-item:hover {
+  border-color: #ccc;
+}
+.rank-position {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.rank-text {
+  flex: 1;
+  font-size: 15px;
+  color: var(--dark-gray);
+}
+.rank-handle {
+  width: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #bbb;
+  cursor: grab;
+  flex-shrink: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: color 0.15s;
+}
+.rank-handle:hover {
+  color: var(--dark-gray);
+}
+.rank-item.dragging {
+  opacity: 0.4;
+  border-color: var(--gold);
+  background: #FFFDE7;
+}
+.rank-item.drag-over {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(255,209,0,0.2);
+}
+.rank-drop-indicator {
+  height: 4px;
+  background: var(--gold);
+  border-radius: 2px;
+  margin: -2px 0;
+  transition: opacity 0.15s;
+  opacity: 0;
+  pointer-events: none;
+}
+.rank-drop-indicator.visible {
+  opacity: 1;
+}
+/* Touch drag ghost */
+.rank-ghost {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.9;
+  transform: rotate(1deg);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  border-radius: 10px;
+  background: var(--white);
+  border: 2px solid var(--gold);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-stack);
+  font-size: 15px;
+  color: var(--dark-gray);
+  max-width: 90vw;
+}
+
+/* ===== Choose / Select Idea ===== */
+.choose-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 2px solid var(--medium-gray);
+  border-radius: 10px;
+  cursor: pointer;
+  margin-bottom: 8px;
+  transition: border-color 0.15s, background 0.15s;
+}
+.choose-option:hover {
+  border-color: #ccc;
+  background: var(--light-gray);
+}
+.choose-option.selected {
+  border-color: var(--gold);
+  background: #FFFDE7;
+}
+.choose-option input[type="radio"] {
+  accent-color: var(--gold);
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.choose-label {
+  flex: 1;
+}
+.choose-label-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--black);
+}
+.choose-label-meta {
+  font-size: 13px;
+  color: #777;
+  margin-top: 2px;
+}
+
+/* Selected Idea Banner */
+.selected-idea-banner {
+  display: none;
+  padding: 14px 18px;
+  background: #EBF4FF;
+  border-left: 4px solid var(--delegation-blue);
+  border-radius: 0 10px 10px 0;
+  margin-bottom: 28px;
+}
+.selected-idea-banner.visible {
+  display: block;
+}
+.selected-idea-banner-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--delegation-blue);
+  margin-bottom: 4px;
+}
+.selected-idea-banner-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--black);
+  line-height: 1.4;
+}
+
+/* Summary Card */
+.summary-card {
+  background: var(--light-gray);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 24px;
+}
+.summary-section {
+  margin-bottom: 24px;
+}
+.summary-section:last-child {
+  margin-bottom: 0;
+}
+.summary-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--medium-gray);
+}
+.summary-section-title.delegation { color: var(--delegation-blue); }
+.summary-section-title.diligence { color: var(--diligence-red); }
+.summary-section-title.synthesis { color: #8B6914; }
+.summary-item {
+  margin-bottom: 12px;
+}
+.summary-item:last-child {
+  margin-bottom: 0;
+}
+.summary-q {
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 2px;
+}
+.summary-a {
+  font-size: 14px;
+  color: var(--dark-gray);
+  white-space: pre-wrap;
+}
+.summary-a.empty {
+  color: #bbb;
+  font-style: italic;
+}
+
+/* Confirmation */
+.confirmation-msg {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 8px;
+}
+.confirmation-sub {
+  font-size: 15px;
+  color: var(--dark-gray);
+  margin-bottom: 24px;
+}
+.btn-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Warning Banner */
+.warning-banner {
+  display: none;
+  padding: 12px 16px;
+  background: #FFF3CD;
+  border: 1px solid #FFE69C;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #664D03;
+  margin-bottom: 16px;
+}
+.warning-banner.visible {
+  display: block;
+}
+
+/* Screen visibility */
+.screen {
+  display: none;
+}
+.screen.active {
+  display: block;
+}
+
+/* Animations */
+.screen.active {
+  animation: fadeIn 0.25s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Focus states */
+.btn:focus-visible,
+.card-select:focus-visible,
+.radio-option:focus-visible,
+.choose-option:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* Phase Selector */
+.phase-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 24px;
+}
+.phase-card {
+  padding: 28px;
+  border: 2px solid var(--medium-gray);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+.phase-card:hover {
+  border-color: var(--gold);
+  background: #FFFDE7;
+}
+.phase-card-number {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--delegation-blue);
+  margin-bottom: 4px;
+}
+.phase-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 6px;
+}
+.phase-card-desc {
+  font-size: 14px;
+  color: var(--dark-gray);
+  line-height: 1.5;
+}
+
+/* Phase 2 progress */
+.p2-progress {
+  margin-bottom: 32px;
+}
+.p2-progress-desktop {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  position: relative;
+}
+.p2-progress-mobile {
+  display: none;
+  font-size: 14px;
+  color: var(--dark-gray);
+  text-align: center;
+  padding: 8px 0;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .card { padding: 24px; }
+  .main { padding: 16px; }
+  .progress-desktop { display: none; }
+  .progress-mobile { display: block; }
+  .p2-progress-desktop { display: none; }
+  .p2-progress-mobile { display: block; }
+  .welcome-title { font-size: 22px; }
+  .section-title { font-size: 20px; }
+  .btn-row { flex-direction: column; }
+  .btn-row .btn { width: 100%; justify-content: center; }
+  .btn-group { flex-direction: column; }
+  .btn-group .btn { width: 100%; justify-content: center; }
+  .idea-row input[type="text"] { font-size: 14px; padding: 10px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-bar"></div>
+  <div class="header-content">
+    <div class="header-logo">Ringling College of Art + Design</div>
+  </div>
+</header>
+
+<!-- Main Content -->
+<main class="main">
+
+  <!-- Progress Indicator -->
+  <div class="progress" id="progress" style="display:none;">
+    <div class="progress-desktop" id="progressDesktop"></div>
+    <div class="progress-mobile" id="progressMobile"></div>
+  </div>
+
+  <!-- ===== Phase Selector ===== -->
+  <div class="screen active" id="screen-phase-select">
+    <div class="card">
+      <div class="welcome-title">Delegation &amp; Diligence Discussion Tool</div>
+      <div class="welcome-subtitle">Building with AI: A Guided Planning Tool for Faculty</div>
+      <p class="welcome-orientation">
+        Welcome! This workshop has two phases. Choose the one your facilitator has directed you to.
+      </p>
+      <div class="phase-cards">
+        <div class="phase-card" onclick="enterPhase(1)">
+          <div class="phase-card-number">Phase 1</div>
+          <div class="phase-card-title">Brainstorming &amp; Planning</div>
+          <div class="phase-card-desc">Start here. Define your idea, set quality standards, and plan your tool.</div>
+        </div>
+        <div class="phase-card" onclick="enterPhase(2)">
+          <div class="phase-card-number">Phase 2</div>
+          <div class="phase-card-title">Reflection &amp; Next Steps</div>
+          <div class="phase-card-desc">Return here after building your prototype to reflect on what you made.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Phase 1: Welcome ===== -->
+  <div class="screen" id="screen-welcome">
+    <div class="card">
+      <div class="welcome-title">Phase 1: Brainstorming &amp; Planning</div>
+      <div class="welcome-subtitle">Building with AI: A Guided Planning Tool for Faculty</div>
+      <p class="welcome-orientation">
+        This tool will walk you through a series of questions to help you plan an AI-built teaching tool. Your responses will be shared with the workshop facilitator. Take your time &mdash; these questions are designed to make you think, not to be filled out quickly.
+      </p>
+      <div class="field-group">
+        <label class="field-label" for="input-name">Your name <span style="color:var(--diligence-red);">*</span></label>
+        <input type="text" id="input-name" placeholder="Full name" required>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="input-dept">Your department or discipline</label>
+        <input type="text" id="input-dept" placeholder="e.g. Graphic Design, Liberal Arts">
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goToScreen('phase-select')">Back</button>
+        <button class="btn btn-primary" id="btn-begin" disabled>Begin</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Screen 1: Brainstorm ===== -->
+  <div class="screen" id="screen-1">
+    <div class="card">
+      <div class="section-badge delegation">Delegation &mdash; Brainstorm</div>
+      <div class="section-description">Before you touch a coding agent, you need clarity on what you're trying to accomplish. Start by listing as many obstacles, opportunities, or unmet needs in your teaching practice as you can think of. Don't filter yourself &mdash; just get your ideas down.</div>
+
+      <div class="field-group">
+        <label class="field-label">What obstacles, opportunities, or unmet needs do you see in your teaching?</label>
+        <span class="field-helper">Think about what frustrates you, what takes too long, or what your students struggle with that a tool might help address. List at least 3 (up to 10).</span>
+
+        <div class="idea-list" id="ideaList"></div>
+
+        <button class="add-idea-btn" id="addIdeaBtn" onclick="addIdea()">
+          <span style="font-size:18px;">+</span> Add another idea
+        </button>
+        <div class="idea-counter" id="ideaCounter"></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goToScreen('welcome')">Back</button>
+        <button class="btn btn-primary" id="btn-to-assess" onclick="goToScreen(2)">Next: Assess Ideas &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Screen 2: Assess Ideas ===== -->
+  <div class="screen" id="screen-2">
+    <div class="card">
+      <div class="section-badge delegation">Delegation &mdash; Assess Ideas</div>
+      <div class="section-description">Now let's think about each idea individually. For each one, consider who would benefit and whether something similar already exists.</div>
+
+      <div id="assessContainer"></div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goToScreen(1)">Back</button>
+        <button class="btn btn-primary" onclick="goToScreen(3)">Next: Rank &amp; Choose &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Screen 3: Rank & Choose ===== -->
+  <div class="screen" id="screen-3">
+    <div class="card">
+      <div class="section-badge delegation">Delegation &mdash; Rank &amp; Choose</div>
+      <div class="section-description">Now prioritize your ideas. Drag them into order from most promising to least. Then select the one you'd like to explore for the rest of this workshop.</div>
+
+      <div class="field-group">
+        <label class="field-label">Drag your ideas into priority order</label>
+        <span class="field-helper">Your top-ranked idea should be #1. Grab the handle on the left to drag and reorder.</span>
+        <div class="rank-list" id="rankList"></div>
+      </div>
+
+      <div class="field-group" id="chooseSection" style="display:none;">
+        <label class="field-label">Which idea do you want to explore today?</label>
+        <span class="field-helper">Pick the one you're most excited about building.</span>
+        <div id="chooseList"></div>
+      </div>
+
+      <div class="field-group" id="successSection" style="display:none;">
+        <label class="field-label" for="q3">What does success look like for this idea? How would you know the tool is working?</label>
+        <textarea id="q3"></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goToScreen(2)">Back</button>
+        <button class="btn btn-primary" id="btn-to-tool" onclick="goToScreen(4)" disabled>Next: Discernment &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Screen 4: Discernment ===== -->
+  <div class="screen" id="screen-4">
+    <div class="card">
+      <div class="selected-idea-banner" data-idea-banner></div>
+      <div class="section-badge delegation">Delegation &mdash; Discernment</div>
+      <div class="section-description">Before you delegate work to a tool, you need to know what good work looks like. These questions help you articulate the quality standards that should guide any tool you build.</div>
+
+      <h3 style="font-size:17px;color:var(--black);margin-bottom:4px;">Defining Quality</h3>
+      <p style="font-size:14px;color:var(--dark-gray);margin-bottom:24px;">For the product or outcome your tool would help create:</p>
+
+      <div class="field-group">
+        <label class="field-label" for="d1">What does an excellent version look like?</label>
+        <span class="field-helper">Name 3&ndash;5 specific quality markers &mdash; not vague terms, but observable characteristics a professional would point to.</span>
+        <textarea id="d1" class="large"></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="d2">What does a mediocre version look like?</label>
+        <span class="field-helper">What are the telltale signs of "good enough" work that doesn't reach excellence?</span>
+        <textarea id="d2"></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="d3">What does failure look like?</label>
+        <span class="field-helper">What would make a professional in your field immediately dismiss the work?</span>
+        <textarea id="d3"></textarea>
+      </div>
+
+      <hr style="border:none;border-top:2px solid var(--medium-gray);margin:32px 0;">
+
+      <h3 style="font-size:17px;color:var(--black);margin-bottom:4px;">Evaluating Tools</h3>
+      <p style="font-size:14px;color:var(--dark-gray);margin-bottom:24px;">Now think about a tool that generates or supports the creation of that work:</p>
+
+      <div class="field-group">
+        <label class="field-label" for="d4">If a tool generated or supported the creation of your product, what would you check first?</label>
+        <textarea id="d4"></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="d5">What aspects of quality in your field are hardest for AI to get right?</label>
+        <span class="field-helper">Where would human judgment matter most?</span>
+        <textarea id="d5"></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="d6">How would you know if a tool was making your work worse?</label>
+        <span class="field-helper">Think about subtle risks: flattening your style, narrowing your range, or encouraging safe choices.</span>
+        <textarea id="d6"></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goToScreen(3)">Back</button>
+        <button class="btn btn-primary" onclick="goToScreen(5)">Next: Tool Awareness &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Screen 5: Tool Awareness ===== -->
+  <div class="screen" id="screen-5">
+    <div class="card">
+      <div class="selected-idea-banner" data-idea-banner></div>
+      <div class="section-badge delegation">Delegation &mdash; Tool Awareness</div>
+      <div class="section-description">Understanding what AI coding agents can and can't do helps you scope your project realistically.</div>
+
+      <div class="field-group">
+        <label class="field-label">Does your concept require student data to function?</label>
+        <div class="radio-group" data-name="q5">
+          <label class="radio-option"><input type="radio" name="q5" value="Yes"><span>Yes</span></label>
+          <label class="radio-option"><input type="radio" name="q5" value="No"><span>No</span></label>
+          <label class="radio-option"><input type="radio" name="q5" value="Not sure"><span>Not sure</span></label>
+        </div>
+        <div class="inline-note" id="note-q5">For today's workshop, plan to use sample or synthetic data. Flag the real data requirements for later institutional review.</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Does your concept require connection to institutional systems like your LMS?</label>
+        <div class="radio-group" data-name="q6">
+          <label class="radio-option"><input type="radio" name="q6" value="Yes"><span>Yes</span></label>
+          <label class="radio-option"><input type="radio" name="q6" value="No"><span>No</span></label>
+          <label class="radio-option"><input type="radio" name="q6" value="Not sure"><span>Not sure</span></label>
+        </div>
+        <div class="inline-note" id="note-q6">LMS integration adds significant complexity. For today, consider building the core logic as a standalone tool and addressing integration later.</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">How technically complex does this feel?</label>
+        <div class="radio-group" data-name="q7">
+          <label class="radio-option"><input type="radio" name="q7" value="Simple"><span>Simple &mdash; a form, converter, or template generator</span></label>
+          <label class="radio-option"><input type="radio" name="q7" value="Moderate"><span>Moderate &mdash; interactive with some logic and conditions</span></label>
+          <label class="radio-option"><input type="radio" name="q7" value="Complex"><span>Complex &mdash; multiple features, AI-powered responses, or dynamic content</span></label>
+          <label class="radio-option"><input type="radio" name="q7" value="Not sure"><span>Not sure</span></label>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goToScreen(4)">Back</button>
+        <button class="btn btn-primary" onclick="goToScreen(6)">Next: Task Delegation &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Screen 6: Task Delegation ===== -->
+  <div class="screen" id="screen-6">
+    <div class="card">
+      <div class="selected-idea-banner" data-idea-banner></div>
+      <div class="section-badge delegation">Delegation &mdash; Task Delegation</div>
+      <div class="section-description">How will AI be involved in what you're building?</div>
+
+      <div class="field-group">
+        <label class="field-label">Which mode of AI use best describes what you're imagining?</label>
+        <div class="card-select-group" id="q8-cards">
+          <div class="card-select" tabindex="0" role="radio" aria-checked="false" data-value="Automation" onclick="selectCard(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectCard(this)}">
+            <div class="card-select-title">Automation</div>
+            <div class="card-select-desc">AI performs a defined task. I know what I want; the tool executes it.</div>
+            <div class="card-select-examples">Examples: A script that reformats your syllabus. A tool that converts notes into quiz questions.</div>
+          </div>
+          <div class="card-select" tabindex="0" role="radio" aria-checked="false" data-value="Augmentation" onclick="selectCard(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectCard(this)}">
+            <div class="card-select-title">Augmentation</div>
+            <div class="card-select-desc">AI and I collaborate. The tool helps me think, draft, or create alongside me.</div>
+            <div class="card-select-examples">Examples: A rubric generator you refine iteratively. An interactive case study builder.</div>
+          </div>
+          <div class="card-select" tabindex="0" role="radio" aria-checked="false" data-value="Agency" onclick="selectCard(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectCard(this)}">
+            <div class="card-select-title">Agency</div>
+            <div class="card-select-desc">AI acts independently for others. The tool interacts with students or colleagues on my behalf.</div>
+            <div class="card-select-examples">Examples: An AI tutor for your course material. A feedback bot that reviews student drafts.</div>
+          </div>
+        </div>
+        <div class="inline-note" id="note-q8">Agency projects are powerful but substantially harder to get right. If this is your first time building with AI tools, consider starting with Automation or Augmentation and working toward Agency.</div>
+      </div>
+
+      <div class="field-group" id="q8-followup" style="display:none;">
+        <label class="field-label" for="q8_why" id="q8-followup-label">Why does this mode fit your idea?</label>
+        <span class="field-helper" id="q8-followup-helper"></span>
+        <textarea id="q8_why"></textarea>
+      </div>
+
+      <div class="field-group" id="q8-how-section" style="display:none;">
+        <label class="field-label" for="q8_how">How do you imagine it working in practice?</label>
+        <span class="field-helper">Walk through the experience: what does the user do, what does the tool do, and where does AI come in?</span>
+        <textarea id="q8_how"></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goToScreen(5)">Back</button>
+        <button class="btn btn-primary" onclick="goToScreen(7)">Next: Creation Diligence &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Screen 7: Creation Diligence ===== -->
+  <div class="screen" id="screen-7">
+    <div class="card">
+      <div class="selected-idea-banner" data-idea-banner></div>
+      <div class="section-badge diligence">Diligence &mdash; Creation Diligence</div>
+      <div class="section-description">Building tools that other people will use comes with responsibility. These questions help you think through what could go wrong and what safeguards you need.</div>
+
+      <div class="field-group">
+        <label class="field-label" for="q9">What data would this tool need to work?</label>
+        <span class="field-helper">Think about inputs (what users type or upload), stored data (what the tool remembers), and external data (what it pulls from other sources).</span>
+        <textarea id="q9"></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Are there privacy concerns with that data?</label>
+        <div class="radio-group" data-name="q10">
+          <label class="radio-option"><input type="radio" name="q10" value="Yes"><span>Yes</span></label>
+          <label class="radio-option"><input type="radio" name="q10" value="No"><span>No</span></label>
+          <label class="radio-option"><input type="radio" name="q10" value="Not sure"><span>Not sure</span></label>
+        </div>
+        <div class="inline-note" id="note-q10" style="margin-top:12px;">
+          <label class="field-label" for="q10_detail" style="font-size:14px;">Briefly describe the concern.</label>
+          <textarea id="q10_detail" class="short" style="margin-top:6px;"></textarea>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="q11">Who would you need to consult before deploying this at your institution?</label>
+        <span class="field-helper">Think about IT, administration, department heads, IRB, legal, or students themselves.</span>
+        <textarea id="q11"></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goToScreen(6)">Back</button>
+        <button class="btn btn-primary" onclick="goToScreen(8)">Next: Transparency Diligence &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Screen 8: Transparency Diligence ===== -->
+  <div class="screen" id="screen-8">
+    <div class="card">
+      <div class="selected-idea-banner" data-idea-banner></div>
+      <div class="section-badge diligence">Diligence &mdash; Transparency Diligence</div>
+      <div class="section-description">If people are going to use your tool, they deserve to understand what it is and how it works.</div>
+
+      <div class="field-group">
+        <label class="field-label" for="q12">If a user asked "How does this tool work?" &mdash; what would you tell them?</label>
+        <span class="field-helper">Try to answer in plain language. If you can't explain it simply, that's worth noting.</span>
+        <textarea id="q12"></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="q13">What should users know about this tool's limitations?</label>
+        <span class="field-helper">What can't it do? Where might it be wrong? What should they double-check?</span>
+        <textarea id="q13"></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goToScreen(7)">Back</button>
+        <button class="btn btn-primary" onclick="goToScreen(9)">Next: Deployment Diligence &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Screen 9: Deployment Diligence ===== -->
+  <div class="screen" id="screen-9">
+    <div class="card">
+      <div class="selected-idea-banner" data-idea-banner></div>
+      <div class="section-badge diligence">Diligence &mdash; Deployment Diligence</div>
+      <div class="section-description">Before you put something in front of users, think about testing, failure modes, and ongoing responsibility.</div>
+
+      <div class="field-group">
+        <label class="field-label" for="q14">What's the worst thing that could happen if this tool gives bad output?</label>
+        <span class="field-helper">This isn't meant to scare you &mdash; it's meant to help you think about where human oversight matters most.</span>
+        <textarea id="q14"></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="q15">How would you test whether this tool is working correctly?</label>
+        <span class="field-helper">What would you check? Who would you ask to try it? What inputs would stress-test it?</span>
+        <textarea id="q15"></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goToScreen(8)">Back</button>
+        <button class="btn btn-primary" onclick="goToScreen(10)">Next: Summary &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Screen 10: Summary ===== -->
+  <div class="screen" id="screen-10">
+    <div class="card">
+      <div class="selected-idea-banner" data-idea-banner></div>
+      <div class="section-badge synthesis">Your Tool Concept</div>
+      <div class="section-description">Pull your thinking together into one clear statement.</div>
+
+      <div class="field-group">
+        <label class="field-label" for="q16">In one sentence, describe your tool concept.</label>
+        <textarea id="q16" class="short"></textarea>
+      </div>
+
+      <div id="warningBanner" class="warning-banner"></div>
+
+      <div id="summaryReview"></div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goToScreen(9)">Back</button>
+        <button class="btn btn-primary" id="btn-submit" onclick="submitResponses()">Submit Responses</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Screen 10: Confirmation ===== -->
+  <div class="screen" id="screen-confirmation">
+    <div class="card">
+      <div class="confirmation-msg" id="confirmMsg"></div>
+      <div class="confirmation-sub">You can use the summary below to share your thinking with your group.</div>
+
+      <div id="summaryFinal"></div>
+
+      <div class="btn-group" style="margin-top:24px;">
+        <button class="btn btn-primary" onclick="downloadCSV()">Download My Responses (CSV)</button>
+        <button class="btn btn-outline" onclick="startOver()">Start Over</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================= -->
+  <!-- PHASE 2: REFLECTION & NEXT STEPS                              -->
+  <!-- ============================================================= -->
+
+  <!-- Phase 2 Progress -->
+  <div class="p2-progress" id="p2Progress" style="display:none;">
+    <div class="p2-progress-desktop" id="p2ProgressDesktop"></div>
+    <div class="p2-progress-mobile" id="p2ProgressMobile"></div>
+  </div>
+
+  <!-- P2 Welcome -->
+  <div class="screen" id="screen-p2-welcome">
+    <div class="card">
+      <div class="welcome-title">Phase 2: Reflection &amp; Next Steps</div>
+      <div class="welcome-subtitle">Looking back at what you built</div>
+      <p class="welcome-orientation">
+        Now that you've spent time building a prototype, let's reflect on the experience. These questions will help you think critically about what you made, what worked, and what comes next.
+      </p>
+      <div class="field-group">
+        <label class="field-label" for="p2-name">Your name <span style="color:var(--diligence-red);">*</span></label>
+        <input type="text" id="p2-name" placeholder="Full name" required>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="p2-email">Your email <span style="color:var(--diligence-red);">*</span></label>
+        <input type="text" id="p2-email" placeholder="you@example.com" required>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="p2-dept">Your department or discipline</label>
+        <input type="text" id="p2-dept" placeholder="e.g. Graphic Design, Liberal Arts">
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="enterPhase(0)">Back</button>
+        <button class="btn btn-primary" id="btn-p2-begin" disabled>Begin</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- P2 Screen 1: Prototype Assessment -->
+  <div class="screen" id="screen-p2-1">
+    <div class="card">
+      <div class="section-badge delegation">Prototype Assessment</div>
+      <div class="section-description">Let's start by looking at what you actually built.</div>
+
+      <div class="field-group">
+        <label class="field-label" for="p2q1">Describe what you built today in 1&ndash;2 sentences.</label>
+        <textarea id="p2q1"></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">On a scale of 1&ndash;5, how close is your prototype to what you originally imagined?</label>
+        <div class="radio-group" data-name="p2q2">
+          <label class="radio-option"><input type="radio" name="p2q2" value="1"><span>1 &mdash; Very far off</span></label>
+          <label class="radio-option"><input type="radio" name="p2q2" value="2"><span>2 &mdash; Somewhat far off</span></label>
+          <label class="radio-option"><input type="radio" name="p2q2" value="3"><span>3 &mdash; About halfway there</span></label>
+          <label class="radio-option"><input type="radio" name="p2q2" value="4"><span>4 &mdash; Pretty close</span></label>
+          <label class="radio-option"><input type="radio" name="p2q2" value="5"><span>5 &mdash; Exactly what I envisioned</span></label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="p2q3">What's the biggest gap between what you planned and what you built?</label>
+        <textarea id="p2q3"></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="p2GoToScreen('p2-welcome')">Back</button>
+        <button class="btn btn-primary" onclick="p2GoToScreen('p2-2')">Next: Quality &amp; Discernment &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- P2 Screen 2: Quality & Discernment -->
+  <div class="screen" id="screen-p2-2">
+    <div class="card">
+      <div class="section-badge delegation">Quality &amp; Discernment</div>
+      <div class="section-description">Apply your professional standards to what the tool produced.</div>
+
+      <div class="field-group">
+        <label class="field-label" for="p2q4">Look at your prototype through the lens of your quality standards. Does the output meet your definition of "excellent," "mediocre," or "failure"?</label>
+        <textarea id="p2q4" class="large"></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="p2q5">What surprised you about what AI could or couldn't do well?</label>
+        <textarea id="p2q5"></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="p2q6">Did the tool make any choices that a professional in your field would catch as wrong or off?</label>
+        <textarea id="p2q6"></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="p2GoToScreen('p2-1')">Back</button>
+        <button class="btn btn-primary" onclick="p2GoToScreen('p2-3')">Next: Delegation Revisited &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- P2 Screen 3: Delegation Revisited -->
+  <div class="screen" id="screen-p2-3">
+    <div class="card">
+      <div class="section-badge delegation">Delegation Revisited</div>
+      <div class="section-description">Revisit your earlier thinking about how AI should be involved.</div>
+
+      <div class="field-group">
+        <label class="field-label" for="p2q7">Now that you've built something, would you change your delegation mode (Automation / Augmentation / Agency)? Why or why not?</label>
+        <textarea id="p2q7" class="large"></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="p2q8">What tasks turned out to be harder to delegate to AI than you expected?</label>
+        <textarea id="p2q8"></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="p2q9">What tasks turned out to be easier than you expected?</label>
+        <textarea id="p2q9"></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="p2GoToScreen('p2-2')">Back</button>
+        <button class="btn btn-primary" onclick="p2GoToScreen('p2-4')">Next: Diligence Revisited &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- P2 Screen 4: Diligence Revisited -->
+  <div class="screen" id="screen-p2-4">
+    <div class="card">
+      <div class="section-badge diligence">Diligence Revisited</div>
+      <div class="section-description">Think about what you learned about responsibility and risk.</div>
+
+      <div class="field-group">
+        <label class="field-label" for="p2q10">What new privacy, ethical, or safety concerns came up during building that you didn't anticipate?</label>
+        <textarea id="p2q10"></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="p2q11">If you were to deploy this tool tomorrow, what's the one thing you'd want to fix or test first?</label>
+        <textarea id="p2q11"></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="p2q12">Who else should see or review this before it's used with real users?</label>
+        <textarea id="p2q12"></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="p2GoToScreen('p2-3')">Back</button>
+        <button class="btn btn-primary" onclick="p2GoToScreen('p2-5')">Next: Next Steps &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- P2 Screen 5: Next Steps -->
+  <div class="screen" id="screen-p2-5">
+    <div class="card">
+      <div class="section-badge synthesis">Next Steps</div>
+      <div class="section-description">Look ahead at what comes after the workshop.</div>
+
+      <div class="field-group">
+        <label class="field-label" for="p2q13">What's the single most important next step for this tool?</label>
+        <textarea id="p2q13"></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="p2q14">What help or resources do you need to take that next step?</label>
+        <textarea id="p2q14"></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="p2q15">Would you recommend this workshop approach to a colleague? What would you change about it?</label>
+        <textarea id="p2q15"></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="p2GoToScreen('p2-4')">Back</button>
+        <button class="btn btn-primary" onclick="p2GoToScreen('p2-summary')">Next: Summary &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- P2 Summary -->
+  <div class="screen" id="screen-p2-summary">
+    <div class="card">
+      <div class="section-badge synthesis">Your Reflection Summary</div>
+      <div class="section-description">Review your responses before submitting.</div>
+
+      <div id="p2SummaryReview"></div>
+
+      <div id="p2WarningBanner" class="warning-banner"></div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="p2GoToScreen('p2-5')">Back</button>
+        <button class="btn btn-primary" id="btn-p2-submit" onclick="p2Submit()">Submit Responses</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- P2 Confirmation -->
+  <div class="screen" id="screen-p2-confirmation">
+    <div class="card">
+      <div class="confirmation-msg" id="p2ConfirmMsg"></div>
+      <div class="confirmation-sub">You can use the summary below to share your thinking with your group.</div>
+
+      <div id="p2SummaryFinal"></div>
+
+      <div class="btn-group" style="margin-top:24px;">
+        <button class="btn btn-primary" onclick="p2DownloadCSV()">Download My Responses (CSV)</button>
+        <button class="btn btn-outline" onclick="p2StartOver()">Start Over</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// =============================================================
+// Configuration
+// =============================================================
+const GOOGLE_SCRIPT_URL = 'YOUR_DEPLOYED_SCRIPT_URL_HERE';
+
+// =============================================================
+// Constants
+// =============================================================
+const MAX_IDEAS = 10;
+
+const STEPS = [
+  { label: 'Brainstorm',       accent: 'delegation' },
+  { label: 'Assess',           accent: 'delegation' },
+  { label: 'Rank &\nChoose',   accent: 'delegation' },
+  { label: 'Discernment',      accent: 'delegation' },
+  { label: 'Tool\nAwareness',  accent: 'delegation' },
+  { label: 'Task\nDelegation', accent: 'delegation' },
+  { label: 'Creation',         accent: 'diligence' },
+  { label: 'Transparency',     accent: 'diligence' },
+  { label: 'Deployment',       accent: 'diligence' },
+  { label: 'Summary',          accent: 'synthesis' },
+];
+
+// =============================================================
+// State
+// =============================================================
+let currentScreen = 'welcome';
+let responses = loadFromStorage();
+
+// Ensure ideas array exists
+if (!responses.ideas || !Array.isArray(responses.ideas)) {
+  responses.ideas = [{ text: '', who_benefits: '', existing_tool: '' }, { text: '', who_benefits: '', existing_tool: '' }, { text: '', who_benefits: '', existing_tool: '' }];
+}
+if (!responses.ranked_order) responses.ranked_order = null;
+if (!responses.selected_idea_index && responses.selected_idea_index !== 0) responses.selected_idea_index = null;
+
+// =============================================================
+// Initialization
+// =============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  buildProgressIndicator();
+  setupWelcomeValidation();
+  setupRadioListeners();
+  setupAutoSave();
+  restoreFields();
+  renderIdeaList();
+});
+
+// =============================================================
+// Progress Indicator
+// =============================================================
+function buildProgressIndicator() {
+  const desktop = document.getElementById('progressDesktop');
+  desktop.innerHTML = '';
+  STEPS.forEach((step, i) => {
+    const item = document.createElement('div');
+    item.className = 'step-item';
+    item.dataset.step = i + 1;
+
+    item.innerHTML = `
+      <div class="step-circle">${i + 1}</div>
+      <div class="step-label">${step.label.replace('\n', '<br>')}</div>
+      <div class="step-accent accent-${step.accent}"></div>
+    `;
+
+    if (i < STEPS.length - 1) {
+      const connector = document.createElement('div');
+      connector.className = 'step-connector';
+      connector.dataset.after = i + 1;
+      item.appendChild(connector);
+    }
+
+    item.addEventListener('click', () => {
+      const stepNum = parseInt(item.dataset.step);
+      if (item.classList.contains('clickable')) {
+        goToScreen(stepNum);
+      }
+    });
+
+    desktop.appendChild(item);
+  });
+}
+
+function updateProgress(screenNum) {
+  if (typeof screenNum !== 'number') {
+    document.getElementById('progress').style.display = 'none';
+    return;
+  }
+
+  document.getElementById('progress').style.display = '';
+  const items = document.querySelectorAll('.step-item');
+  const connectors = document.querySelectorAll('.step-connector');
+
+  items.forEach((item, i) => {
+    const step = i + 1;
+    item.classList.remove('active', 'completed', 'clickable');
+
+    if (step === screenNum) {
+      item.classList.add('active');
+      const circle = item.querySelector('.step-circle');
+      circle.textContent = step;
+    } else if (step < screenNum) {
+      item.classList.add('completed', 'clickable');
+      const circle = item.querySelector('.step-circle');
+      circle.innerHTML = '&#10003;';
+    } else {
+      const circle = item.querySelector('.step-circle');
+      circle.textContent = step;
+    }
+  });
+
+  connectors.forEach(c => {
+    const afterStep = parseInt(c.dataset.after);
+    c.classList.toggle('completed', afterStep < screenNum);
+  });
+
+  document.getElementById('progressMobile').textContent =
+    `Step ${screenNum} of ${STEPS.length}: ${STEPS[screenNum - 1].label.replace('\n', ' ')}`;
+}
+
+// =============================================================
+// Navigation
+// =============================================================
+function goToScreen(target) {
+  saveCurrentFields();
+
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+
+  if (target === 'phase-select') {
+    document.getElementById('screen-phase-select').classList.add('active');
+    updateProgress(null);
+    currentScreen = 'phase-select';
+  } else if (target === 'welcome') {
+    document.getElementById('screen-welcome').classList.add('active');
+    updateProgress(null);
+    currentScreen = 'welcome';
+  } else if (target === 'confirmation') {
+    document.getElementById('screen-confirmation').classList.add('active');
+    updateProgress(null);
+    currentScreen = 'confirmation';
+  } else {
+    // Rebuild dynamic screens when entering them
+    if (target === 1) renderIdeaList();
+    if (target === 2) buildAssessScreen();
+    if (target === 3) buildRankScreen();
+    if (target >= 4) updateIdeaBanners();
+    if (target === 10) {
+      document.getElementById('summaryReview').innerHTML = buildSummaryHTML();
+    }
+
+    document.getElementById(`screen-${target}`).classList.add('active');
+    updateProgress(target);
+    currentScreen = target;
+  }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// =============================================================
+// Welcome Screen
+// =============================================================
+function setupWelcomeValidation() {
+  const nameInput = document.getElementById('input-name');
+  const beginBtn = document.getElementById('btn-begin');
+
+  nameInput.addEventListener('input', () => {
+    beginBtn.disabled = !nameInput.value.trim();
+  });
+
+  beginBtn.addEventListener('click', () => {
+    if (nameInput.value.trim()) {
+      responses.name = nameInput.value.trim();
+      responses.department = document.getElementById('input-dept').value.trim();
+      saveToStorage();
+      goToScreen(1);
+    }
+  });
+
+  if (responses.name) {
+    nameInput.value = responses.name;
+    beginBtn.disabled = false;
+  }
+  if (responses.department) {
+    document.getElementById('input-dept').value = responses.department;
+  }
+}
+
+// =============================================================
+// Screen 1: Brainstorm — Idea List
+// =============================================================
+function renderIdeaList() {
+  const container = document.getElementById('ideaList');
+  container.innerHTML = '';
+
+  responses.ideas.forEach((idea, i) => {
+    const row = document.createElement('div');
+    row.className = 'idea-row';
+    row.innerHTML = `
+      <div class="idea-number">${i + 1}</div>
+      <input type="text" value="${escapeAttr(idea.text)}" placeholder="Describe an obstacle, opportunity, or need..."
+             data-idea-index="${i}"
+             oninput="updateIdeaText(${i}, this.value)"
+             aria-label="Idea ${i + 1}">
+      ${responses.ideas.length > 3
+        ? `<button class="idea-remove" onclick="removeIdea(${i})" aria-label="Remove idea ${i + 1}" title="Remove">&times;</button>`
+        : `<div style="width:32px;"></div>`
+      }
+    `;
+    container.appendChild(row);
+  });
+
+  updateIdeaCounter();
+  updateBrainstormNextBtn();
+}
+
+function addIdea() {
+  if (responses.ideas.length >= MAX_IDEAS) return;
+  responses.ideas.push({ text: '', who_benefits: '', existing_tool: '' });
+  saveToStorage();
+  renderIdeaList();
+
+  // Focus the new input
+  const inputs = document.querySelectorAll('#ideaList input[type="text"]');
+  if (inputs.length) inputs[inputs.length - 1].focus();
+}
+
+function removeIdea(index) {
+  if (responses.ideas.length <= 3) return;
+  responses.ideas.splice(index, 1);
+  // Reset ranking since the list changed
+  responses.ranked_order = null;
+  responses.selected_idea_index = null;
+  saveToStorage();
+  renderIdeaList();
+}
+
+function updateIdeaText(index, value) {
+  responses.ideas[index].text = value;
+  saveToStorage();
+  updateBrainstormNextBtn();
+}
+
+function updateIdeaCounter() {
+  const addBtn = document.getElementById('addIdeaBtn');
+  addBtn.disabled = responses.ideas.length >= MAX_IDEAS;
+
+  const filledCount = responses.ideas.filter(idea => idea.text.trim()).length;
+  const nextBtn = document.getElementById('btn-to-assess');
+  nextBtn.disabled = filledCount < 3;
+
+  const counter = document.getElementById('ideaCounter');
+  if (filledCount < 3) {
+    counter.textContent = `${responses.ideas.length} of ${MAX_IDEAS} ideas \u2014 ${3 - filledCount} more needed`;
+    counter.style.color = '#C53030';
+  } else {
+    counter.textContent = `${responses.ideas.length} of ${MAX_IDEAS} ideas`;
+    counter.style.color = '#999';
+  }
+}
+
+function updateBrainstormNextBtn() {
+  updateIdeaCounter();
+}
+
+// =============================================================
+// Screen 2: Assess Ideas
+// =============================================================
+function buildAssessScreen() {
+  const container = document.getElementById('assessContainer');
+  container.innerHTML = '';
+
+  // Filter to only non-empty ideas
+  const activeIdeas = responses.ideas
+    .map((idea, i) => ({ ...idea, originalIndex: i }))
+    .filter(idea => idea.text.trim());
+
+  if (activeIdeas.length === 0) return;
+
+  activeIdeas.forEach((idea, displayIdx) => {
+    const i = idea.originalIndex;
+    const card = document.createElement('div');
+    card.className = 'assess-card';
+    card.innerHTML = `
+      <div class="assess-card-title">Idea ${displayIdx + 1}</div>
+      <div class="assess-card-text">${escapeHTML(idea.text)}</div>
+
+      <div class="assess-field-group">
+        <div class="assess-sub-label">Who benefits from solving this?</div>
+        <div class="radio-group" data-name="assess_benefit_${i}">
+          <label class="radio-option ${idea.who_benefits === 'Me (saves my time or effort)' ? 'selected' : ''}">
+            <input type="radio" name="assess_benefit_${i}" value="Me (saves my time or effort)" ${idea.who_benefits === 'Me (saves my time or effort)' ? 'checked' : ''}>
+            <span>Me (saves my time or effort)</span>
+          </label>
+          <label class="radio-option ${idea.who_benefits === 'My students (new or better learning experience)' ? 'selected' : ''}">
+            <input type="radio" name="assess_benefit_${i}" value="My students (new or better learning experience)" ${idea.who_benefits === 'My students (new or better learning experience)' ? 'checked' : ''}>
+            <span>My students (new or better learning experience)</span>
+          </label>
+          <label class="radio-option ${idea.who_benefits === 'Both' ? 'selected' : ''}">
+            <input type="radio" name="assess_benefit_${i}" value="Both" ${idea.who_benefits === 'Both' ? 'checked' : ''}>
+            <span>Both</span>
+          </label>
+          <label class="radio-option ${idea.who_benefits === 'My department or institution' ? 'selected' : ''}">
+            <input type="radio" name="assess_benefit_${i}" value="My department or institution" ${idea.who_benefits === 'My department or institution' ? 'checked' : ''}>
+            <span>My department or institution</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="assess-field-group">
+        <div class="assess-sub-label">Is there an existing tool or feature that's close? What's wrong with it?</div>
+        <textarea data-assess-tool="${i}" style="min-height:70px;font-size:14px;" placeholder="Too expensive, too clunky, missing a key function...">${escapeHTML(idea.existing_tool)}</textarea>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  // Wire up radio buttons in assess cards
+  container.querySelectorAll('.radio-group').forEach(group => {
+    group.querySelectorAll('input[type="radio"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        group.querySelectorAll('.radio-option').forEach(opt => opt.classList.remove('selected'));
+        radio.closest('.radio-option').classList.add('selected');
+        const match = radio.name.match(/assess_benefit_(\d+)/);
+        if (match) {
+          responses.ideas[parseInt(match[1])].who_benefits = radio.value;
+          saveToStorage();
+        }
+      });
+    });
+  });
+
+  // Wire up textareas
+  container.querySelectorAll('textarea[data-assess-tool]').forEach(ta => {
+    ta.addEventListener('input', debounce(() => {
+      const idx = parseInt(ta.dataset.assessTool);
+      responses.ideas[idx].existing_tool = ta.value;
+      saveToStorage();
+    }, 400));
+  });
+}
+
+// =============================================================
+// Screen 3: Rank & Choose
+// =============================================================
+function buildRankScreen() {
+  // Get active (non-empty) ideas
+  const activeIndices = responses.ideas
+    .map((idea, i) => ({ text: idea.text.trim(), index: i }))
+    .filter(x => x.text)
+    .map(x => x.index);
+
+  // Initialize ranked_order if needed
+  if (!responses.ranked_order ||
+      responses.ranked_order.length !== activeIndices.length ||
+      !arraysMatch(responses.ranked_order.slice().sort(), activeIndices.slice().sort())) {
+    responses.ranked_order = [...activeIndices];
+  }
+
+  renderRankList();
+  renderChooseList();
+
+  // Show choose section always (ranking is optional reorder)
+  document.getElementById('chooseSection').style.display = '';
+
+  // Show success section if an idea is chosen
+  updateSuccessVisibility();
+}
+
+function renderRankList() {
+  const container = document.getElementById('rankList');
+  container.innerHTML = '';
+
+  responses.ranked_order.forEach((ideaIdx, pos) => {
+    const idea = responses.ideas[ideaIdx];
+    const item = document.createElement('div');
+    item.className = 'rank-item';
+    item.draggable = true;
+    item.dataset.pos = pos;
+    item.innerHTML = `
+      <div class="rank-handle" aria-hidden="true">&#8942;&#8942;</div>
+      <div class="rank-position">${pos + 1}</div>
+      <div class="rank-text">${escapeHTML(idea.text)}</div>
+    `;
+    container.appendChild(item);
+  });
+
+  initDragAndDrop(container);
+}
+
+// =============================================================
+// Drag & Drop (mouse + touch)
+// =============================================================
+let dragState = null;
+
+function initDragAndDrop(container) {
+  const items = container.querySelectorAll('.rank-item');
+
+  items.forEach(item => {
+    // --- Mouse drag (HTML5) ---
+    item.addEventListener('dragstart', e => {
+      dragState = { fromPos: parseInt(item.dataset.pos) };
+      item.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', item.dataset.pos);
+    });
+
+    item.addEventListener('dragend', () => {
+      item.classList.remove('dragging');
+      clearDropIndicators(container);
+      dragState = null;
+    });
+
+    item.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      if (!dragState) return;
+      const rect = item.getBoundingClientRect();
+      const midY = rect.top + rect.height / 2;
+      const targetPos = parseInt(item.dataset.pos);
+      clearDropIndicators(container);
+      item.classList.add('drag-over');
+    });
+
+    item.addEventListener('dragleave', () => {
+      item.classList.remove('drag-over');
+    });
+
+    item.addEventListener('drop', e => {
+      e.preventDefault();
+      if (!dragState) return;
+      const fromPos = dragState.fromPos;
+      const toPos = parseInt(item.dataset.pos);
+      clearDropIndicators(container);
+      if (fromPos !== toPos) {
+        reorderRank(fromPos, toPos);
+      }
+      dragState = null;
+    });
+
+    // --- Touch drag ---
+    const handle = item.querySelector('.rank-handle');
+    handle.addEventListener('touchstart', onTouchStart, { passive: false });
+  });
+}
+
+function onTouchStart(e) {
+  e.preventDefault();
+  const item = e.target.closest('.rank-item');
+  if (!item) return;
+
+  const touch = e.touches[0];
+  const rect = item.getBoundingClientRect();
+  const container = document.getElementById('rankList');
+  const allItems = Array.from(container.querySelectorAll('.rank-item'));
+
+  // Create ghost
+  const ghost = document.createElement('div');
+  ghost.className = 'rank-ghost';
+  ghost.textContent = item.querySelector('.rank-text').textContent;
+  ghost.style.width = rect.width + 'px';
+  ghost.style.left = rect.left + 'px';
+  ghost.style.top = touch.clientY - rect.height / 2 + 'px';
+  document.body.appendChild(ghost);
+
+  item.classList.add('dragging');
+
+  const fromPos = parseInt(item.dataset.pos);
+  let currentOverPos = fromPos;
+
+  function onTouchMove(ev) {
+    ev.preventDefault();
+    const t = ev.touches[0];
+    ghost.style.top = t.clientY - rect.height / 2 + 'px';
+
+    // Determine which item we're over
+    allItems.forEach(it => it.classList.remove('drag-over'));
+    const overItem = allItems.find(it => {
+      const r = it.getBoundingClientRect();
+      return t.clientY >= r.top && t.clientY <= r.bottom;
+    });
+    if (overItem) {
+      overItem.classList.add('drag-over');
+      currentOverPos = parseInt(overItem.dataset.pos);
+    }
+  }
+
+  function onTouchEnd(ev) {
+    ev.preventDefault();
+    document.removeEventListener('touchmove', onTouchMove);
+    document.removeEventListener('touchend', onTouchEnd);
+    ghost.remove();
+    item.classList.remove('dragging');
+    allItems.forEach(it => it.classList.remove('drag-over'));
+
+    if (fromPos !== currentOverPos) {
+      reorderRank(fromPos, currentOverPos);
+    }
+  }
+
+  document.addEventListener('touchmove', onTouchMove, { passive: false });
+  document.addEventListener('touchend', onTouchEnd, { passive: false });
+}
+
+function reorderRank(fromPos, toPos) {
+  const moved = responses.ranked_order.splice(fromPos, 1)[0];
+  responses.ranked_order.splice(toPos, 0, moved);
+  saveToStorage();
+  renderRankList();
+  renderChooseList();
+}
+
+function clearDropIndicators(container) {
+  container.querySelectorAll('.rank-item').forEach(it => {
+    it.classList.remove('drag-over');
+  });
+}
+
+function renderChooseList() {
+  const container = document.getElementById('chooseList');
+  container.innerHTML = '';
+
+  responses.ranked_order.forEach((ideaIdx, pos) => {
+    const idea = responses.ideas[ideaIdx];
+    const isSelected = responses.selected_idea_index === ideaIdx;
+    const opt = document.createElement('label');
+    opt.className = `choose-option ${isSelected ? 'selected' : ''}`;
+    opt.innerHTML = `
+      <input type="radio" name="choose_idea" value="${ideaIdx}" ${isSelected ? 'checked' : ''}>
+      <div class="choose-label">
+        <div class="choose-label-title">${escapeHTML(idea.text)}</div>
+        <div class="choose-label-meta">
+          ${idea.who_benefits ? 'Benefits: ' + escapeHTML(idea.who_benefits) : ''}
+        </div>
+      </div>
+    `;
+    opt.querySelector('input').addEventListener('change', () => {
+      container.querySelectorAll('.choose-option').forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+      responses.selected_idea_index = ideaIdx;
+      saveToStorage();
+      updateSuccessVisibility();
+    });
+    container.appendChild(opt);
+  });
+}
+
+function updateSuccessVisibility() {
+  const hasSelection = responses.selected_idea_index !== null && responses.selected_idea_index !== undefined;
+  document.getElementById('successSection').style.display = hasSelection ? '' : 'none';
+  document.getElementById('btn-to-tool').disabled = !hasSelection;
+
+  if (hasSelection && responses.q3) {
+    document.getElementById('q3').value = responses.q3;
+  }
+}
+
+// =============================================================
+// Radio Buttons — styling and conditional notes (screens 4+)
+// =============================================================
+function setupRadioListeners() {
+  document.querySelectorAll('.radio-group[data-name]').forEach(group => {
+    group.querySelectorAll('input[type="radio"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        group.querySelectorAll('.radio-option').forEach(opt => opt.classList.remove('selected'));
+        radio.closest('.radio-option').classList.add('selected');
+
+        const name = radio.name;
+        if (name === 'q5') toggleNote('note-q5', radio.value === 'Yes');
+        if (name === 'q6') toggleNote('note-q6', radio.value === 'Yes');
+        if (name === 'q10') toggleNote('note-q10', radio.value === 'Yes' || radio.value === 'Not sure');
+      });
+    });
+  });
+}
+
+function toggleNote(id, show) {
+  document.getElementById(id).classList.toggle('visible', show);
+}
+
+// =============================================================
+// Card Select (Q8)
+// =============================================================
+function selectCard(el) {
+  document.querySelectorAll('#q8-cards .card-select').forEach(c => {
+    c.classList.remove('selected');
+    c.setAttribute('aria-checked', 'false');
+  });
+  el.classList.add('selected');
+  el.setAttribute('aria-checked', 'true');
+  responses.q8 = el.dataset.value;
+  toggleNote('note-q8', el.dataset.value === 'Agency');
+  showQ8Followup(el.dataset.value);
+  saveToStorage();
+}
+
+function showQ8Followup(mode) {
+  const followup = document.getElementById('q8-followup');
+  const howSection = document.getElementById('q8-how-section');
+  const label = document.getElementById('q8-followup-label');
+  const helper = document.getElementById('q8-followup-helper');
+
+  const prompts = {
+    Automation: {
+      label: 'Why is automation the right fit?',
+      helper: 'What makes this task well-defined enough for AI to handle on its own? What are the clear inputs and outputs?'
+    },
+    Augmentation: {
+      label: 'Why is augmentation the right fit?',
+      helper: 'What parts need your judgment or creativity, and where would AI be most helpful as a collaborator?'
+    },
+    Agency: {
+      label: 'Why does this need to act independently?',
+      helper: 'What decisions would the AI make on its own? Why can\'t a human be in the loop each time?'
+    }
+  };
+
+  const p = prompts[mode];
+  if (p) {
+    label.textContent = p.label;
+    helper.textContent = p.helper;
+    followup.style.display = '';
+    howSection.style.display = '';
+
+    // Restore saved values if any
+    if (responses.q8_why) document.getElementById('q8_why').value = responses.q8_why;
+    if (responses.q8_how) document.getElementById('q8_how').value = responses.q8_how;
+  }
+}
+
+// =============================================================
+// Auto-save
+// =============================================================
+function setupAutoSave() {
+  document.querySelectorAll('textarea, input[type="text"]').forEach(el => {
+    el.addEventListener('input', debounce(() => {
+      saveCurrentFields();
+    }, 500));
+  });
+  document.querySelectorAll('input[type="radio"]').forEach(el => {
+    el.addEventListener('change', () => {
+      saveCurrentFields();
+    });
+  });
+}
+
+function saveCurrentFields() {
+  // Text fields (non-brainstorm, non-assess)
+  ['q3','d1','d2','d3','d4','d5','d6','q8_why','q8_how','q9','q10_detail','q11','q12','q13','q14','q15','q16'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) responses[id] = el.value;
+  });
+
+  // Radio buttons
+  ['q5','q6','q7','q10'].forEach(name => {
+    const checked = document.querySelector(`input[name="${name}"]:checked`);
+    if (checked) responses[name] = checked.value;
+  });
+
+  // Name & dept
+  const nameEl = document.getElementById('input-name');
+  if (nameEl) {
+    responses.name = nameEl.value.trim();
+    responses.department = document.getElementById('input-dept').value.trim();
+  }
+
+  saveToStorage();
+}
+
+function restoreFields() {
+  ['q3','d1','d2','d3','d4','d5','d6','q8_why','q8_how','q9','q10_detail','q11','q12','q13','q14','q15','q16'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && responses[id]) el.value = responses[id];
+  });
+
+  ['q5','q6','q7','q10'].forEach(name => {
+    if (responses[name]) {
+      const radio = document.querySelector(`input[name="${name}"][value="${CSS.escape(responses[name])}"]`);
+      if (radio) {
+        radio.checked = true;
+        radio.closest('.radio-option').classList.add('selected');
+        radio.dispatchEvent(new Event('change'));
+      }
+    }
+  });
+
+  if (responses.q8) {
+    const card = document.querySelector(`#q8-cards .card-select[data-value="${responses.q8}"]`);
+    if (card) {
+      card.classList.add('selected');
+      card.setAttribute('aria-checked', 'true');
+      toggleNote('note-q8', responses.q8 === 'Agency');
+      showQ8Followup(responses.q8);
+    }
+  }
+}
+
+// =============================================================
+// localStorage
+// =============================================================
+function saveToStorage() {
+  try {
+    localStorage.setItem('dd_tool_responses', JSON.stringify(responses));
+  } catch (e) { /* ignore */ }
+}
+
+function loadFromStorage() {
+  try {
+    const saved = localStorage.getItem('dd_tool_responses');
+    return saved ? JSON.parse(saved) : {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function clearStorage() {
+  try {
+    localStorage.removeItem('dd_tool_responses');
+  } catch (e) { /* ignore */ }
+}
+
+// =============================================================
+// Summary Builder
+// =============================================================
+function getSelectedIdea() {
+  if (responses.selected_idea_index !== null && responses.selected_idea_index !== undefined) {
+    return responses.ideas[responses.selected_idea_index] || null;
+  }
+  return null;
+}
+
+function updateIdeaBanners() {
+  const sel = getSelectedIdea();
+  document.querySelectorAll('[data-idea-banner]').forEach(banner => {
+    if (sel && sel.text.trim()) {
+      banner.innerHTML = `
+        <div class="selected-idea-banner-label">Your focus</div>
+        <div class="selected-idea-banner-text">${escapeHTML(sel.text)}</div>
+      `;
+      banner.classList.add('visible');
+    } else {
+      banner.classList.remove('visible');
+      banner.innerHTML = '';
+    }
+  });
+}
+
+function buildSummaryHTML() {
+  let html = '<div class="summary-card">';
+
+  // Brainstorm section — all ideas
+  html += '<div class="summary-section"><div class="summary-section-title delegation">All Brainstormed Ideas</div>';
+  const activeIdeas = responses.ideas.filter(idea => idea.text.trim());
+  if (activeIdeas.length) {
+    activeIdeas.forEach((idea, i) => {
+      html += `<div class="summary-item">
+        <div class="summary-q">Idea ${i + 1}</div>
+        <div class="summary-a">${escapeHTML(idea.text)}${idea.who_benefits ? ' <span style="color:#777;font-size:13px;">(Benefits: ' + escapeHTML(idea.who_benefits) + ')</span>' : ''}</div>
+      </div>`;
+    });
+  } else {
+    html += '<div class="summary-item"><div class="summary-a empty">(no ideas entered)</div></div>';
+  }
+  html += '</div>';
+
+  // Selected idea details
+  const sel = getSelectedIdea();
+  html += '<div class="summary-section"><div class="summary-section-title delegation">Selected Idea</div>';
+  if (sel) {
+    html += summaryRow('Chosen Idea', sel.text);
+    html += summaryRow('Who Benefits', sel.who_benefits);
+    html += summaryRow('Existing Tools / Gaps', sel.existing_tool);
+    html += summaryRow('Success Criteria', responses.q3);
+  } else {
+    html += '<div class="summary-item"><div class="summary-a empty">(no idea selected)</div></div>';
+  }
+  html += '</div>';
+
+  // Discernment
+  html += '<div class="summary-section"><div class="summary-section-title delegation">Discernment</div>';
+  html += summaryRow('Excellent Version', responses.d1);
+  html += summaryRow('Mediocre Version', responses.d2);
+  html += summaryRow('Failure', responses.d3);
+  html += summaryRow('What to Check First', responses.d4);
+  html += summaryRow('Hardest for AI', responses.d5);
+  html += summaryRow('Signs Tool Makes Work Worse', responses.d6);
+  html += '</div>';
+
+  // Tool Awareness
+  html += '<div class="summary-section"><div class="summary-section-title delegation">Tool Awareness</div>';
+  html += summaryRow('Student Data Required', responses.q5);
+  html += summaryRow('LMS Integration', responses.q6);
+  html += summaryRow('Technical Complexity', responses.q7);
+  html += '</div>';
+
+  // Task Delegation
+  html += '<div class="summary-section"><div class="summary-section-title delegation">Task Delegation</div>';
+  html += summaryRow('AI Mode', responses.q8);
+  html += summaryRow('Why This Mode', responses.q8_why);
+  html += summaryRow('How It Would Work', responses.q8_how);
+  html += '</div>';
+
+  // Creation Diligence
+  html += '<div class="summary-section"><div class="summary-section-title diligence">Creation Diligence</div>';
+  html += summaryRow('Data Needed', responses.q9);
+  html += summaryRow('Privacy Concerns', responses.q10);
+  if (responses.q10 === 'Yes' || responses.q10 === 'Not sure') {
+    html += summaryRow('Privacy Detail', responses.q10_detail);
+  }
+  html += summaryRow('Who to Consult', responses.q11);
+  html += '</div>';
+
+  // Transparency
+  html += '<div class="summary-section"><div class="summary-section-title diligence">Transparency Diligence</div>';
+  html += summaryRow('How It Works', responses.q12);
+  html += summaryRow('Limitations', responses.q13);
+  html += '</div>';
+
+  // Deployment
+  html += '<div class="summary-section"><div class="summary-section-title diligence">Deployment Diligence</div>';
+  html += summaryRow('Worst Case', responses.q14);
+  html += summaryRow('Testing Plan', responses.q15);
+  html += '</div>';
+
+  // Synthesis
+  html += '<div class="summary-section"><div class="summary-section-title synthesis">Synthesis</div>';
+  html += summaryRow('Tool Concept', responses.q16);
+  html += '</div>';
+
+  html += '</div>';
+  return html;
+}
+
+function summaryRow(label, value) {
+  const val = value || '';
+  return `<div class="summary-item">
+    <div class="summary-q">${escapeHTML(label)}</div>
+    <div class="summary-a ${val ? '' : 'empty'}">${val ? escapeHTML(val) : '(not answered)'}</div>
+  </div>`;
+}
+
+// =============================================================
+// Submit
+// =============================================================
+async function submitResponses() {
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  saveCurrentFields();
+  responses.timestamp = new Date().toISOString();
+
+  // Build a flat payload for Google Sheets
+  const sel = getSelectedIdea();
+  const payload = {
+    name: responses.name || '',
+    department: responses.department || '',
+    all_ideas: responses.ideas.filter(i => i.text.trim()).map((idea, idx) => `${idx + 1}. ${idea.text}`).join('\n'),
+    selected_idea: sel ? sel.text : '',
+    selected_who_benefits: sel ? (sel.who_benefits || '') : '',
+    selected_existing_tool: sel ? (sel.existing_tool || '') : '',
+    q3: responses.q3 || '',
+    d1: responses.d1 || '',
+    d2: responses.d2 || '',
+    d3: responses.d3 || '',
+    d4: responses.d4 || '',
+    d5: responses.d5 || '',
+    d6: responses.d6 || '',
+    q5: responses.q5 || '',
+    q6: responses.q6 || '',
+    q7: responses.q7 || '',
+    q8: responses.q8 || '',
+    q8_why: responses.q8_why || '',
+    q8_how: responses.q8_how || '',
+    q9: responses.q9 || '',
+    q10: responses.q10 || '',
+    q10_detail: responses.q10_detail || '',
+    q11: responses.q11 || '',
+    q12: responses.q12 || '',
+    q13: responses.q13 || '',
+    q14: responses.q14 || '',
+    q15: responses.q15 || '',
+    q16: responses.q16 || '',
+  };
+
+  try {
+    if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL !== 'YOUR_DEPLOYED_SCRIPT_URL_HERE') {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    }
+  } catch (err) {
+    const banner = document.getElementById('warningBanner');
+    banner.textContent = "Your responses couldn't be synced. Don't worry \u2014 you can download them as a CSV.";
+    banner.classList.add('visible');
+  }
+
+  document.getElementById('confirmMsg').textContent =
+    `Your responses have been submitted. Thank you, ${responses.name}.`;
+  document.getElementById('summaryFinal').innerHTML = buildSummaryHTML();
+  goToScreen('confirmation');
+
+  btn.disabled = false;
+  btn.textContent = 'Submit Responses';
+}
+
+// =============================================================
+// CSV Download
+// =============================================================
+function downloadCSV() {
+  const sel = getSelectedIdea();
+  const rows = [
+    ['Delegation & Diligence Discussion Tool \u2014 Response Summary'],
+    [],
+    ['Name', responses.name || ''],
+    ['Department', responses.department || ''],
+    ['Submitted', responses.timestamp || new Date().toISOString()],
+    [],
+    ['--- BRAINSTORMED IDEAS ---', ''],
+  ];
+
+  responses.ideas.filter(i => i.text.trim()).forEach((idea, idx) => {
+    rows.push([`Idea ${idx + 1}`, idea.text]);
+    rows.push([`  Who Benefits`, idea.who_benefits || '']);
+    rows.push([`  Existing Tool/Gap`, idea.existing_tool || '']);
+  });
+
+  rows.push([]);
+  rows.push(['--- SELECTED IDEA ---', '']);
+  rows.push(['Chosen Idea', sel ? sel.text : '']);
+  rows.push(['Who Benefits', sel ? (sel.who_benefits || '') : '']);
+  rows.push(['Existing Tools / Gaps', sel ? (sel.existing_tool || '') : '']);
+  rows.push(['Success Criteria', responses.q3 || '']);
+
+  rows.push([]);
+  rows.push(['--- DISCERNMENT ---', '']);
+  rows.push(['Excellent Version', responses.d1 || '']);
+  rows.push(['Mediocre Version', responses.d2 || '']);
+  rows.push(['Failure', responses.d3 || '']);
+  rows.push(['What to Check First', responses.d4 || '']);
+  rows.push(['Hardest for AI', responses.d5 || '']);
+  rows.push(['Signs Tool Makes Work Worse', responses.d6 || '']);
+
+  rows.push([]);
+  rows.push(['--- TOOL AWARENESS ---', '']);
+  rows.push(['Student Data Required', responses.q5 || '']);
+  rows.push(['LMS Integration', responses.q6 || '']);
+  rows.push(['Technical Complexity', responses.q7 || '']);
+
+  rows.push([]);
+  rows.push(['--- TASK DELEGATION ---', '']);
+  rows.push(['AI Mode', responses.q8 || '']);
+  rows.push(['Why This Mode', responses.q8_why || '']);
+  rows.push(['How It Would Work', responses.q8_how || '']);
+
+  rows.push([]);
+  rows.push(['--- CREATION DILIGENCE ---', '']);
+  rows.push(['Data Needed', responses.q9 || '']);
+  rows.push(['Privacy Concerns', responses.q10 || '']);
+  rows.push(['Privacy Detail', responses.q10_detail || '']);
+  rows.push(['Who to Consult', responses.q11 || '']);
+
+  rows.push([]);
+  rows.push(['--- TRANSPARENCY DILIGENCE ---', '']);
+  rows.push(['How It Works', responses.q12 || '']);
+  rows.push(['Limitations', responses.q13 || '']);
+
+  rows.push([]);
+  rows.push(['--- DEPLOYMENT DILIGENCE ---', '']);
+  rows.push(['Worst Case', responses.q14 || '']);
+  rows.push(['Testing Plan', responses.q15 || '']);
+
+  rows.push([]);
+  rows.push(['--- SYNTHESIS ---', '']);
+  rows.push(['Tool Concept', responses.q16 || '']);
+
+  const csvContent = rows.map(row =>
+    row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
+  ).join('\r\n');
+
+  const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `DD_Tool_${(responses.name || 'responses').replace(/\s+/g, '_')}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// =============================================================
+// Start Over
+// =============================================================
+function startOver() {
+  responses = { ideas: [{ text: '', who_benefits: '', existing_tool: '' }] };
+  clearStorage();
+
+  document.querySelectorAll('textarea, input[type="text"]').forEach(el => el.value = '');
+  document.querySelectorAll('input[type="radio"]').forEach(el => {
+    el.checked = false;
+    if (el.closest('.radio-option')) el.closest('.radio-option').classList.remove('selected');
+  });
+  document.querySelectorAll('.card-select').forEach(el => {
+    el.classList.remove('selected');
+    el.setAttribute('aria-checked', 'false');
+  });
+  document.querySelectorAll('.inline-note').forEach(el => el.classList.remove('visible'));
+  document.getElementById('btn-begin').disabled = true;
+  document.getElementById('warningBanner').classList.remove('visible');
+
+  renderIdeaList();
+  goToScreen('phase-select');
+}
+
+function enterPhase(phase) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  if (phase === 1) {
+    document.getElementById('screen-welcome').classList.add('active');
+    currentScreen = 'welcome';
+  } else if (phase === 2) {
+    document.getElementById('screen-p2-welcome').classList.add('active');
+    p2CurrentScreen = 'p2-welcome';
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// =============================================================
+// Utilities
+// =============================================================
+function escapeHTML(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function escapeAttr(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function debounce(fn, ms) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), ms);
+  };
+}
+
+function arraysMatch(a, b) {
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
+}
+
+// =============================================================
+// =============================================================
+// PHASE 2: REFLECTION & NEXT STEPS
+// =============================================================
+// =============================================================
+
+const P2_STEPS = [
+  { label: 'Prototype',   accent: 'delegation' },
+  { label: 'Quality',     accent: 'delegation' },
+  { label: 'Delegation',  accent: 'delegation' },
+  { label: 'Diligence',   accent: 'diligence' },
+  { label: 'Next Steps',  accent: 'synthesis' },
+];
+
+const P2_SCREEN_ORDER = ['p2-1','p2-2','p2-3','p2-4','p2-5'];
+
+let p2CurrentScreen = 'p2-welcome';
+let p2Responses = p2LoadFromStorage();
+
+const P2_TEXT_FIELDS = ['p2q1','p2q3','p2q4','p2q5','p2q6','p2q7','p2q8','p2q9','p2q10','p2q11','p2q12','p2q13','p2q14','p2q15'];
+const P2_RADIO_FIELDS = ['p2q2'];
+
+const P2_QUESTIONS = [
+  { key: 'p2q1',  label: 'What You Built',           section: 'Prototype Assessment' },
+  { key: 'p2q2',  label: 'Closeness to Vision (1-5)', section: 'Prototype Assessment' },
+  { key: 'p2q3',  label: 'Biggest Gap',              section: 'Prototype Assessment' },
+  { key: 'p2q4',  label: 'Quality Assessment',       section: 'Quality & Discernment' },
+  { key: 'p2q5',  label: 'AI Surprises',             section: 'Quality & Discernment' },
+  { key: 'p2q6',  label: 'Professional Errors',      section: 'Quality & Discernment' },
+  { key: 'p2q7',  label: 'Change Delegation Mode?',  section: 'Delegation Revisited' },
+  { key: 'p2q8',  label: 'Harder Than Expected',     section: 'Delegation Revisited' },
+  { key: 'p2q9',  label: 'Easier Than Expected',     section: 'Delegation Revisited' },
+  { key: 'p2q10', label: 'New Concerns',             section: 'Diligence Revisited' },
+  { key: 'p2q11', label: 'Fix or Test First',        section: 'Diligence Revisited' },
+  { key: 'p2q12', label: 'Who Should Review',        section: 'Diligence Revisited' },
+  { key: 'p2q13', label: 'Most Important Next Step', section: 'Next Steps' },
+  { key: 'p2q14', label: 'Help & Resources Needed',  section: 'Next Steps' },
+  { key: 'p2q15', label: 'Workshop Recommendation',  section: 'Next Steps' },
+];
+
+// --- P2 Init ---
+(function initPhase2() {
+  buildP2Progress();
+  setupP2WelcomeValidation();
+  setupP2RadioListeners();
+  setupP2AutoSave();
+  restoreP2Fields();
+})();
+
+// --- P2 Progress Bar ---
+function buildP2Progress() {
+  const desktop = document.getElementById('p2ProgressDesktop');
+  desktop.innerHTML = '';
+  P2_STEPS.forEach((step, i) => {
+    const item = document.createElement('div');
+    item.className = 'step-item';
+    item.dataset.step = i + 1;
+    item.dataset.phase = '2';
+    item.innerHTML = `
+      <div class="step-circle">${i + 1}</div>
+      <div class="step-label">${step.label}</div>
+      <div class="step-accent accent-${step.accent}"></div>
+    `;
+    if (i < P2_STEPS.length - 1) {
+      const connector = document.createElement('div');
+      connector.className = 'step-connector';
+      connector.dataset.after = i + 1;
+      item.appendChild(connector);
+    }
+    item.addEventListener('click', () => {
+      const stepNum = parseInt(item.dataset.step);
+      if (item.classList.contains('clickable')) {
+        p2GoToScreen(`p2-${stepNum}`);
+      }
+    });
+    desktop.appendChild(item);
+  });
+}
+
+function updateP2Progress(screenId) {
+  const stepIdx = P2_SCREEN_ORDER.indexOf(screenId);
+  if (stepIdx === -1) {
+    document.getElementById('p2Progress').style.display = 'none';
+    return;
+  }
+  const stepNum = stepIdx + 1;
+  document.getElementById('p2Progress').style.display = '';
+
+  document.querySelectorAll('#p2ProgressDesktop .step-item').forEach((item, i) => {
+    const s = i + 1;
+    item.classList.remove('active', 'completed', 'clickable');
+    if (s === stepNum) {
+      item.classList.add('active');
+      item.querySelector('.step-circle').textContent = s;
+    } else if (s < stepNum) {
+      item.classList.add('completed', 'clickable');
+      item.querySelector('.step-circle').innerHTML = '&#10003;';
+    } else {
+      item.querySelector('.step-circle').textContent = s;
+    }
+  });
+
+  document.querySelectorAll('#p2ProgressDesktop .step-connector').forEach(c => {
+    c.classList.toggle('completed', parseInt(c.dataset.after) < stepNum);
+  });
+
+  document.getElementById('p2ProgressMobile').textContent =
+    `Step ${stepNum} of ${P2_STEPS.length}: ${P2_STEPS[stepNum - 1].label}`;
+}
+
+// --- P2 Navigation ---
+function p2GoToScreen(target) {
+  p2SaveCurrentFields();
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+
+  if (target === 'p2-welcome') {
+    document.getElementById('screen-p2-welcome').classList.add('active');
+    updateP2Progress(null);
+    p2CurrentScreen = 'p2-welcome';
+  } else if (target === 'p2-summary') {
+    document.getElementById('screen-p2-summary').classList.add('active');
+    document.getElementById('p2SummaryReview').innerHTML = buildP2SummaryHTML();
+    updateP2Progress(null);
+    p2CurrentScreen = 'p2-summary';
+  } else if (target === 'p2-confirmation') {
+    document.getElementById('screen-p2-confirmation').classList.add('active');
+    updateP2Progress(null);
+    p2CurrentScreen = 'p2-confirmation';
+  } else {
+    document.getElementById(`screen-${target}`).classList.add('active');
+    updateP2Progress(target);
+    p2CurrentScreen = target;
+  }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Update enterPhase to handle going back to phase select
+function enterPhaseBack() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-phase-select').classList.add('active');
+  document.getElementById('p2Progress').style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Patch the enterPhase(0) call from Phase 2 back button
+(function() {
+  const origEnterPhase = enterPhase;
+  enterPhase = function(phase) {
+    if (phase === 0) {
+      enterPhaseBack();
+    } else {
+      origEnterPhase(phase);
+    }
+  };
+})();
+
+// --- P2 Welcome Validation ---
+function setupP2WelcomeValidation() {
+  const nameInput = document.getElementById('p2-name');
+  const emailInput = document.getElementById('p2-email');
+  const beginBtn = document.getElementById('btn-p2-begin');
+
+  function validate() {
+    beginBtn.disabled = !(nameInput.value.trim() && emailInput.value.trim());
+  }
+  nameInput.addEventListener('input', validate);
+  emailInput.addEventListener('input', validate);
+
+  beginBtn.addEventListener('click', () => {
+    if (nameInput.value.trim() && emailInput.value.trim()) {
+      p2Responses.name = nameInput.value.trim();
+      p2Responses.email = emailInput.value.trim();
+      p2Responses.department = document.getElementById('p2-dept').value.trim();
+      p2SaveToStorage();
+      p2GoToScreen('p2-1');
+    }
+  });
+
+  // Restore
+  if (p2Responses.name) { nameInput.value = p2Responses.name; }
+  if (p2Responses.email) { emailInput.value = p2Responses.email; }
+  if (p2Responses.department) { document.getElementById('p2-dept').value = p2Responses.department; }
+  validate();
+}
+
+// --- P2 Radio Listeners ---
+function setupP2RadioListeners() {
+  document.querySelectorAll('[data-name^="p2"]').forEach(group => {
+    group.querySelectorAll('input[type="radio"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        group.querySelectorAll('.radio-option').forEach(opt => opt.classList.remove('selected'));
+        radio.closest('.radio-option').classList.add('selected');
+      });
+    });
+  });
+}
+
+// --- P2 Auto-save ---
+function setupP2AutoSave() {
+  P2_TEXT_FIELDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('input', debounce(() => { p2SaveCurrentFields(); }, 500));
+    }
+  });
+  P2_RADIO_FIELDS.forEach(name => {
+    document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+      r.addEventListener('change', () => { p2SaveCurrentFields(); });
+    });
+  });
+}
+
+function p2SaveCurrentFields() {
+  P2_TEXT_FIELDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) p2Responses[id] = el.value;
+  });
+  P2_RADIO_FIELDS.forEach(name => {
+    const checked = document.querySelector(`input[name="${name}"]:checked`);
+    if (checked) p2Responses[name] = checked.value;
+  });
+  const nameEl = document.getElementById('p2-name');
+  if (nameEl) {
+    p2Responses.name = nameEl.value.trim();
+    p2Responses.email = document.getElementById('p2-email').value.trim();
+    p2Responses.department = document.getElementById('p2-dept').value.trim();
+  }
+  p2SaveToStorage();
+}
+
+function restoreP2Fields() {
+  P2_TEXT_FIELDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && p2Responses[id]) el.value = p2Responses[id];
+  });
+  P2_RADIO_FIELDS.forEach(name => {
+    if (p2Responses[name]) {
+      const radio = document.querySelector(`input[name="${name}"][value="${p2Responses[name]}"]`);
+      if (radio) {
+        radio.checked = true;
+        radio.closest('.radio-option').classList.add('selected');
+      }
+    }
+  });
+}
+
+// --- P2 localStorage ---
+function p2SaveToStorage() {
+  try { localStorage.setItem('dd_tool_phase2', JSON.stringify(p2Responses)); } catch(e) {}
+}
+function p2LoadFromStorage() {
+  try {
+    const s = localStorage.getItem('dd_tool_phase2');
+    return s ? JSON.parse(s) : {};
+  } catch(e) { return {}; }
+}
+function p2ClearStorage() {
+  try { localStorage.removeItem('dd_tool_phase2'); } catch(e) {}
+}
+
+// --- P2 Summary ---
+function buildP2SummaryHTML() {
+  let html = '<div class="summary-card">';
+  let lastSection = '';
+  P2_QUESTIONS.forEach(q => {
+    if (q.section !== lastSection) {
+      if (lastSection) html += '</div>';
+      const stype = q.section.includes('Diligence') ? 'diligence' : (q.section === 'Next Steps' ? 'synthesis' : 'delegation');
+      html += `<div class="summary-section"><div class="summary-section-title ${stype}">${q.section}</div>`;
+      lastSection = q.section;
+    }
+    const val = p2Responses[q.key] || '';
+    html += `<div class="summary-item">
+      <div class="summary-q">${escapeHTML(q.label)}</div>
+      <div class="summary-a ${val ? '' : 'empty'}">${val ? escapeHTML(val) : '(not answered)'}</div>
+    </div>`;
+  });
+  html += '</div></div>';
+  return html;
+}
+
+// --- P2 Submit ---
+async function p2Submit() {
+  const btn = document.getElementById('btn-p2-submit');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+  p2SaveCurrentFields();
+  p2Responses.timestamp = new Date().toISOString();
+
+  const payload = { phase: 2 };
+  payload.name = p2Responses.name || '';
+  payload.email = p2Responses.email || '';
+  payload.department = p2Responses.department || '';
+  P2_QUESTIONS.forEach(q => { payload[q.key] = p2Responses[q.key] || ''; });
+
+  try {
+    if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL !== 'YOUR_DEPLOYED_SCRIPT_URL_HERE') {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    }
+  } catch(err) {
+    const banner = document.getElementById('p2WarningBanner');
+    banner.textContent = "Your responses couldn't be synced. Don't worry \u2014 you can download them as a CSV.";
+    banner.classList.add('visible');
+  }
+
+  document.getElementById('p2ConfirmMsg').textContent =
+    `Your responses have been submitted. Thank you, ${p2Responses.name}.`;
+  document.getElementById('p2SummaryFinal').innerHTML = buildP2SummaryHTML();
+  p2GoToScreen('p2-confirmation');
+  btn.disabled = false;
+  btn.textContent = 'Submit Responses';
+}
+
+// --- P2 CSV ---
+function p2DownloadCSV() {
+  const rows = [
+    ['Delegation & Diligence Discussion Tool \u2014 Phase 2: Reflection'],
+    [],
+    ['Name', p2Responses.name || ''],
+    ['Email', p2Responses.email || ''],
+    ['Department', p2Responses.department || ''],
+    ['Submitted', p2Responses.timestamp || new Date().toISOString()],
+    [],
+    ['Question', 'Response'],
+  ];
+  P2_QUESTIONS.forEach(q => {
+    rows.push([`${q.section}: ${q.label}`, p2Responses[q.key] || '']);
+  });
+
+  const csvContent = rows.map(row =>
+    row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
+  ).join('\r\n');
+
+  const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `DD_Tool_Phase2_${(p2Responses.name || 'responses').replace(/\s+/g, '_')}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// --- P2 Start Over ---
+function p2StartOver() {
+  p2Responses = {};
+  p2ClearStorage();
+  document.querySelectorAll('#screen-p2-welcome input, #screen-p2-1 textarea, #screen-p2-2 textarea, #screen-p2-3 textarea, #screen-p2-4 textarea, #screen-p2-5 textarea').forEach(el => el.value = '');
+  document.querySelectorAll('[data-name^="p2"] input[type="radio"]').forEach(el => {
+    el.checked = false;
+    if (el.closest('.radio-option')) el.closest('.radio-option').classList.remove('selected');
+  });
+  document.getElementById('btn-p2-begin').disabled = true;
+  document.getElementById('p2WarningBanner').classList.remove('visible');
+  enterPhaseBack();
+}
+</script>
+
+</body>
+</html>
