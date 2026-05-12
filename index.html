@@ -819,6 +819,35 @@ textarea.short {
   outline-offset: 2px;
 }
 
+/* Landing brand lockup */
+.landing-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--medium-gray);
+}
+.ringling-mark {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+}
+.landing-brand-text {
+  line-height: 1.2;
+}
+.landing-brand-line1 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--black);
+  letter-spacing: -0.2px;
+}
+.landing-brand-line2 {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--dark-gray);
+}
+
 /* Phase Selector */
 .phase-cards {
   display: flex;
@@ -915,6 +944,29 @@ textarea.short {
   <!-- ===== Phase Selector ===== -->
   <div class="screen active" id="screen-phase-select">
     <div class="card">
+      <div class="landing-brand">
+        <svg class="ringling-mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="Ringling College of Art + Design mark">
+          <g>
+            <!-- Cyan diagonal -->
+            <polygon points="6,30 50,15 55,40 12,55" fill="#00B7E1"/>
+            <!-- Magenta vertical -->
+            <polygon points="50,8 70,12 65,55 45,50" fill="#E5197D"/>
+            <!-- Yellow accent -->
+            <polygon points="20,55 50,48 47,62 17,68" fill="#FFD100"/>
+            <!-- Orange wide -->
+            <polygon points="2,72 60,55 65,82 6,95" fill="#F58220"/>
+            <!-- Green tilt -->
+            <polygon points="42,55 90,70 85,90 40,80" fill="#33C481"/>
+            <!-- White "R" stroke composition -->
+            <path d="M30,28 L30,78 M30,28 L52,28 Q62,28 62,40 Q62,52 52,52 L30,52 M52,52 L62,78"
+                  stroke="white" stroke-width="6" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+          </g>
+        </svg>
+        <div class="landing-brand-text">
+          <div class="landing-brand-line1">Ringling College</div>
+          <div class="landing-brand-line2">of Art + Design</div>
+        </div>
+      </div>
       <div class="welcome-title">Delegation &amp; Diligence Discussion Tool</div>
       <div class="welcome-subtitle">Building with AI: A Guided Planning Tool for Faculty</div>
       <p class="welcome-orientation">
