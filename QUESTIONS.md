@@ -57,6 +57,14 @@ All prompts, questions, and helper text that participants see in the app, organi
 - Minimum: 3 ideas. Maximum: 10 ideas.
 - Add/remove rows with + and × buttons.
 
+### Follow-up
+**Label:** What would meaningful improvement look like here, in pedagogical terms?
+
+**Helper:**
+> Beyond saving time or effort, what change in teaching or learning would actually matter?
+
+- Free text.
+
 ---
 
 ## Step 2: Assess Ideas
