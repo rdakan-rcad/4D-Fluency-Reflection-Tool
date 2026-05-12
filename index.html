@@ -1182,13 +1182,33 @@ textarea.short {
 
       <div class="btn-row">
         <button class="btn btn-secondary" onclick="goToScreen(5)">Back</button>
-        <button class="btn btn-primary" onclick="goToScreen(7)">Next: Creation Diligence &rarr;</button>
+        <button class="btn btn-primary" onclick="goToScreen(7)">Next: System Prompt &rarr;</button>
       </div>
     </div>
   </div>
 
-  <!-- ===== Screen 7: Creation Diligence ===== -->
+  <!-- ===== Screen 7: System Prompt ===== -->
   <div class="screen" id="screen-7">
+    <div class="card">
+      <div class="selected-idea-banner" data-idea-banner></div>
+      <div class="section-badge delegation">Delegation &mdash; System Prompt</div>
+      <div class="section-description">A system prompt is the underlying instruction that shapes how an AI behaves. Drafting it forces you to be explicit about tone, scope, limits, and what the AI should refuse to do.</div>
+
+      <div class="field-group">
+        <label class="field-label" for="q_system_prompt">How will you instruct the AI to behave? Draft a system prompt or behavioral logic.</label>
+        <span class="field-helper">Be specific: What should the AI know about its role? What should it always do? What should it never do? What tone, scope, or guardrails matter most?</span>
+        <textarea id="q_system_prompt" class="large" style="min-height:200px;"></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goToScreen(6)">Back</button>
+        <button class="btn btn-primary" onclick="goToScreen(8)">Next: Creation Diligence &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Screen 8: Creation Diligence ===== -->
+  <div class="screen" id="screen-8">
     <div class="card">
       <div class="selected-idea-banner" data-idea-banner></div>
       <div class="section-badge diligence">Diligence &mdash; Creation Diligence</div>
@@ -1220,14 +1240,14 @@ textarea.short {
       </div>
 
       <div class="btn-row">
-        <button class="btn btn-secondary" onclick="goToScreen(6)">Back</button>
-        <button class="btn btn-primary" onclick="goToScreen(8)">Next: Transparency Diligence &rarr;</button>
+        <button class="btn btn-secondary" onclick="goToScreen(7)">Back</button>
+        <button class="btn btn-primary" onclick="goToScreen(9)">Next: Transparency Diligence &rarr;</button>
       </div>
     </div>
   </div>
 
-  <!-- ===== Screen 8: Transparency Diligence ===== -->
-  <div class="screen" id="screen-8">
+  <!-- ===== Screen 9: Transparency Diligence ===== -->
+  <div class="screen" id="screen-9">
     <div class="card">
       <div class="selected-idea-banner" data-idea-banner></div>
       <div class="section-badge diligence">Diligence &mdash; Transparency Diligence</div>
@@ -1246,14 +1266,14 @@ textarea.short {
       </div>
 
       <div class="btn-row">
-        <button class="btn btn-secondary" onclick="goToScreen(7)">Back</button>
-        <button class="btn btn-primary" onclick="goToScreen(9)">Next: Deployment Diligence &rarr;</button>
+        <button class="btn btn-secondary" onclick="goToScreen(8)">Back</button>
+        <button class="btn btn-primary" onclick="goToScreen(10)">Next: Deployment Diligence &rarr;</button>
       </div>
     </div>
   </div>
 
-  <!-- ===== Screen 9: Deployment Diligence ===== -->
-  <div class="screen" id="screen-9">
+  <!-- ===== Screen 10: Deployment Diligence ===== -->
+  <div class="screen" id="screen-10">
     <div class="card">
       <div class="selected-idea-banner" data-idea-banner></div>
       <div class="section-badge diligence">Diligence &mdash; Deployment Diligence</div>
@@ -1272,14 +1292,14 @@ textarea.short {
       </div>
 
       <div class="btn-row">
-        <button class="btn btn-secondary" onclick="goToScreen(8)">Back</button>
-        <button class="btn btn-primary" onclick="goToScreen(10)">Next: Summary &rarr;</button>
+        <button class="btn btn-secondary" onclick="goToScreen(9)">Back</button>
+        <button class="btn btn-primary" onclick="goToScreen(11)">Next: Summary &rarr;</button>
       </div>
     </div>
   </div>
 
-  <!-- ===== Screen 10: Summary ===== -->
-  <div class="screen" id="screen-10">
+  <!-- ===== Screen 11: Summary ===== -->
+  <div class="screen" id="screen-11">
     <div class="card">
       <div class="selected-idea-banner" data-idea-banner></div>
       <div class="section-badge synthesis">Your Tool Concept</div>
@@ -1295,13 +1315,13 @@ textarea.short {
       <div id="summaryReview"></div>
 
       <div class="btn-row">
-        <button class="btn btn-secondary" onclick="goToScreen(9)">Back</button>
+        <button class="btn btn-secondary" onclick="goToScreen(10)">Back</button>
         <button class="btn btn-primary" id="btn-submit" onclick="submitResponses()">Submit Responses</button>
       </div>
     </div>
   </div>
 
-  <!-- ===== Screen 10: Confirmation ===== -->
+  <!-- ===== Screen 12: Confirmation ===== -->
   <div class="screen" id="screen-confirmation">
     <div class="card">
       <div class="confirmation-msg" id="confirmMsg"></div>
@@ -1551,6 +1571,7 @@ const STEPS = [
   { label: 'Discernment',      accent: 'delegation' },
   { label: 'Tool\nAwareness',  accent: 'delegation' },
   { label: 'Task\nDelegation', accent: 'delegation' },
+  { label: 'System\nPrompt',   accent: 'delegation' },
   { label: 'Creation',         accent: 'diligence' },
   { label: 'Transparency',     accent: 'diligence' },
   { label: 'Deployment',       accent: 'diligence' },
@@ -1680,7 +1701,7 @@ function goToScreen(target) {
     if (target === 2) buildAssessScreen();
     if (target === 3) buildRankScreen();
     if (target >= 4) updateIdeaBanners();
-    if (target === 10) {
+    if (target === 11) {
       document.getElementById('summaryReview').innerHTML = buildSummaryHTML();
     }
 
@@ -2186,7 +2207,7 @@ function setupAutoSave() {
 
 function saveCurrentFields() {
   // Text fields (non-brainstorm, non-assess)
-  ['q3','q_pedagogical','q_context','d1','d2','d3','d4','d5','d6','q8_why','q8_how','q8_roles','q9','q10_detail','q11','q12','q13','q14','q15','q16'].forEach(id => {
+  ['q3','q_pedagogical','q_context','d1','d2','d3','d4','d5','d6','q8_why','q8_how','q8_roles','q_system_prompt','q9','q10_detail','q11','q12','q13','q14','q15','q16'].forEach(id => {
     const el = document.getElementById(id);
     if (el) responses[id] = el.value;
   });
@@ -2208,7 +2229,7 @@ function saveCurrentFields() {
 }
 
 function restoreFields() {
-  ['q3','q_pedagogical','q_context','d1','d2','d3','d4','d5','d6','q8_why','q8_how','q8_roles','q9','q10_detail','q11','q12','q13','q14','q15','q16'].forEach(id => {
+  ['q3','q_pedagogical','q_context','d1','d2','d3','d4','d5','d6','q8_why','q8_how','q8_roles','q_system_prompt','q9','q10_detail','q11','q12','q13','q14','q15','q16'].forEach(id => {
     const el = document.getElementById(id);
     if (el && responses[id]) el.value = responses[id];
   });
@@ -2346,6 +2367,11 @@ function buildSummaryHTML() {
   html += summaryRow('Role Distribution (AI/Student/Instructor)', responses.q8_roles);
   html += '</div>';
 
+  // System Prompt
+  html += '<div class="summary-section"><div class="summary-section-title delegation">System Prompt</div>';
+  html += summaryRow('System Prompt / Behavioral Logic', responses.q_system_prompt);
+  html += '</div>';
+
   // Creation Diligence
   html += '<div class="summary-section"><div class="summary-section-title diligence">Creation Diligence</div>';
   html += summaryRow('Data Needed', responses.q9);
@@ -2421,6 +2447,7 @@ async function submitResponses() {
     q8_why: responses.q8_why || '',
     q8_how: responses.q8_how || '',
     q8_roles: responses.q8_roles || '',
+    q_system_prompt: responses.q_system_prompt || '',
     q9: responses.q9 || '',
     q10: responses.q10 || '',
     q10_detail: responses.q10_detail || '',
@@ -2508,6 +2535,10 @@ function downloadCSV() {
   rows.push(['Why This Mode', responses.q8_why || '']);
   rows.push(['How It Would Work', responses.q8_how || '']);
   rows.push(['Role Distribution (AI/Student/Instructor)', responses.q8_roles || '']);
+
+  rows.push([]);
+  rows.push(['--- SYSTEM PROMPT ---', '']);
+  rows.push(['System Prompt / Behavioral Logic', responses.q_system_prompt || '']);
 
   rows.push([]);
   rows.push(['--- CREATION DILIGENCE ---', '']);

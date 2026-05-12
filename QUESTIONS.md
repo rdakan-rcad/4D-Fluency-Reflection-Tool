@@ -238,7 +238,24 @@ Helper text varies by mode:
 
 ---
 
-## Step 7: Creation Diligence
+## Step 7: System Prompt
+
+**Section:** Delegation — System Prompt
+
+**Description:**
+> A system prompt is the underlying instruction that shapes how an AI behaves. Drafting it forces you to be explicit about tone, scope, limits, and what the AI should refuse to do.
+
+### Question
+**Label:** How will you instruct the AI to behave? Draft a system prompt or behavioral logic.
+
+**Helper:**
+> Be specific: What should the AI know about its role? What should it always do? What should it never do? What tone, scope, or guardrails matter most?
+
+- Large free-text area.
+
+---
+
+## Step 8: Creation Diligence
 
 **Section:** Diligence — Creation Diligence
 
@@ -263,7 +280,7 @@ Helper text varies by mode:
 
 ---
 
-## Step 8: Transparency Diligence
+## Step 9: Transparency Diligence
 
 **Section:** Diligence — Transparency Diligence
 
@@ -280,7 +297,7 @@ Helper text varies by mode:
 
 ---
 
-## Step 9: Deployment Diligence
+## Step 10: Deployment Diligence
 
 **Section:** Diligence — Deployment Diligence
 
@@ -297,7 +314,7 @@ Helper text varies by mode:
 
 ---
 
-## Step 10: Summary
+## Step 11: Summary
 
 **Section:** Your Tool Concept
 
