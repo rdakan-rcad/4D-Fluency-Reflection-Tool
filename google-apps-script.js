@@ -142,7 +142,11 @@ function handlePhase2(ss, data) {
       'Who Should Review',
       'Most Important Next Step',
       'Help & Resources Needed',
-      'Workshop Recommendation'
+      'Workshop Recommendation',
+      'Governance Fluency Change',
+      'Hardest Judgment to Translate',
+      'Interest in Funded Study',
+      'Participation Level'
     ]);
   }
 
@@ -165,6 +169,10 @@ function handlePhase2(ss, data) {
     data.p2q12      || '',
     data.p2q13      || '',
     data.p2q14      || '',
-    data.p2q15      || ''
+    data.p2q15      || '',
+    data.p2q16      || '',
+    data.p2q17      || '',
+    data.p2q18      || '',
+    data.p2q19      || ''
   ]);
 }

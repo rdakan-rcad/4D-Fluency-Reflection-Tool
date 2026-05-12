@@ -1530,6 +1530,49 @@ textarea.short {
         <textarea id="p2q15"></textarea>
       </div>
 
+      <hr style="border:none;border-top:2px solid var(--medium-gray);margin:32px 0;">
+
+      <h3 style="font-size:17px;color:var(--black);margin-bottom:4px;">Governance &amp; Study Participation</h3>
+      <p style="font-size:14px;color:var(--dark-gray);margin-bottom:24px;">A few closing questions about your experience and possible future involvement.</p>
+
+      <div class="field-group">
+        <label class="field-label">Compared with the start of the session, do you now feel:</label>
+        <div class="radio-group" data-name="p2q16">
+          <label class="radio-option"><input type="radio" name="p2q16" value="More able to govern AI in my teaching"><span>More able to govern AI in my teaching</span></label>
+          <label class="radio-option"><input type="radio" name="p2q16" value="About the same"><span>About the same</span></label>
+          <label class="radio-option"><input type="radio" name="p2q16" value="Less able to govern AI in my teaching"><span>Less able to govern AI in my teaching</span></label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Which kind of judgment felt hardest to translate into design logic?</label>
+        <div class="radio-group" data-name="p2q17">
+          <label class="radio-option"><input type="radio" name="p2q17" value="Deciding what to delegate"><span>Deciding what to delegate</span></label>
+          <label class="radio-option"><input type="radio" name="p2q17" value="Describing the task clearly"><span>Describing the task clearly</span></label>
+          <label class="radio-option"><input type="radio" name="p2q17" value="Defining quality / discernment"><span>Defining quality / discernment</span></label>
+          <label class="radio-option"><input type="radio" name="p2q17" value="Setting limits / accountability"><span>Setting limits / accountability</span></label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Would you want to be considered for the formal funded study if this project is awarded?</label>
+        <div class="radio-group" data-name="p2q18">
+          <label class="radio-option"><input type="radio" name="p2q18" value="Yes"><span>Yes</span></label>
+          <label class="radio-option"><input type="radio" name="p2q18" value="Maybe"><span>Maybe</span></label>
+          <label class="radio-option"><input type="radio" name="p2q18" value="No"><span>No</span></label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">What level of participation in a later funded study would be realistic for you?</label>
+        <div class="radio-group" data-name="p2q19">
+          <label class="radio-option"><input type="radio" name="p2q19" value="Interviews only"><span>Interviews only</span></label>
+          <label class="radio-option"><input type="radio" name="p2q19" value="Interviews + written reflections"><span>Interviews + written reflections</span></label>
+          <label class="radio-option"><input type="radio" name="p2q19" value="Interviews + voice memos"><span>Interviews + voice memos</span></label>
+          <label class="radio-option"><input type="radio" name="p2q19" value="Interviews + artifact sharing"><span>Interviews + artifact sharing</span></label>
+        </div>
+      </div>
+
       <div class="btn-row">
         <button class="btn btn-secondary" onclick="p2GoToScreen('p2-4')">Back</button>
         <button class="btn btn-primary" onclick="p2GoToScreen('p2-summary')">Next: Summary &rarr;</button>
@@ -2688,7 +2731,7 @@ let p2CurrentScreen = 'p2-welcome';
 let p2Responses = p2LoadFromStorage();
 
 const P2_TEXT_FIELDS = ['p2q1','p2q3','p2q4','p2q5','p2q6','p2q7','p2q8','p2q9','p2q10','p2q11','p2q12','p2q13','p2q14','p2q15'];
-const P2_RADIO_FIELDS = ['p2q2'];
+const P2_RADIO_FIELDS = ['p2q2','p2q16','p2q17','p2q18','p2q19'];
 
 const P2_QUESTIONS = [
   { key: 'p2q1',  label: 'What You Built',           section: 'Prototype Assessment' },
@@ -2706,6 +2749,10 @@ const P2_QUESTIONS = [
   { key: 'p2q13', label: 'Most Important Next Step', section: 'Next Steps' },
   { key: 'p2q14', label: 'Help & Resources Needed',  section: 'Next Steps' },
   { key: 'p2q15', label: 'Workshop Recommendation',  section: 'Next Steps' },
+  { key: 'p2q16', label: 'Governance Fluency Change', section: 'Governance & Study Participation' },
+  { key: 'p2q17', label: 'Hardest Judgment to Translate', section: 'Governance & Study Participation' },
+  { key: 'p2q18', label: 'Interest in Funded Study', section: 'Governance & Study Participation' },
+  { key: 'p2q19', label: 'Participation Level',     section: 'Governance & Study Participation' },
 ];
 
 // --- P2 Init ---
@@ -2936,7 +2983,7 @@ function buildP2SummaryHTML() {
   P2_QUESTIONS.forEach(q => {
     if (q.section !== lastSection) {
       if (lastSection) html += '</div>';
-      const stype = q.section.includes('Diligence') ? 'diligence' : (q.section === 'Next Steps' ? 'synthesis' : 'delegation');
+      const stype = q.section.includes('Diligence') ? 'diligence' : (q.section === 'Next Steps' || q.section.includes('Governance') ? 'synthesis' : 'delegation');
       html += `<div class="summary-section"><div class="summary-section-title ${stype}">${q.section}</div>`;
       lastSection = q.section;
     }

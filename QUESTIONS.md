@@ -448,6 +448,35 @@ Buttons: Download My Responses (CSV) · Start Over
 
 ---
 
+## Governance & Study Participation
+*(appears at the end of the Next Steps screen, below a divider)*
+
+**Intro:** A few closing questions about your experience and possible future involvement.
+
+### Q1. Compared with the start of the session, do you now feel:
+- More able to govern AI in my teaching
+- About the same
+- Less able to govern AI in my teaching
+
+### Q2. Which kind of judgment felt hardest to translate into design logic?
+- Deciding what to delegate
+- Describing the task clearly
+- Defining quality / discernment
+- Setting limits / accountability
+
+### Q3. Would you want to be considered for the formal funded study if this project is awarded?
+- Yes
+- Maybe
+- No
+
+### Q4. What level of participation in a later funded study would be realistic for you?
+- Interviews only
+- Interviews + written reflections
+- Interviews + voice memos
+- Interviews + artifact sharing
+
+---
+
 ## Summary screen
 
 **Section:** Your Reflection Summary
