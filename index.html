@@ -1014,6 +1014,12 @@ textarea.short {
         <div id="chooseList"></div>
       </div>
 
+      <div class="field-group" id="contextSection" style="display:none;">
+        <label class="field-label" for="q_context">In what course, assignment, or teaching situation would this support matter most?</label>
+        <span class="field-helper">Anchor the idea in a specific context where it would make a real difference.</span>
+        <textarea id="q_context"></textarea>
+      </div>
+
       <div class="field-group" id="successSection" style="display:none;">
         <label class="field-label" for="q3">What does success look like for this idea? How would you know the tool is working?</label>
         <textarea id="q3"></textarea>
@@ -2070,11 +2076,13 @@ function renderChooseList() {
 
 function updateSuccessVisibility() {
   const hasSelection = responses.selected_idea_index !== null && responses.selected_idea_index !== undefined;
+  document.getElementById('contextSection').style.display = hasSelection ? '' : 'none';
   document.getElementById('successSection').style.display = hasSelection ? '' : 'none';
   document.getElementById('btn-to-tool').disabled = !hasSelection;
 
-  if (hasSelection && responses.q3) {
-    document.getElementById('q3').value = responses.q3;
+  if (hasSelection) {
+    if (responses.q3) document.getElementById('q3').value = responses.q3;
+    if (responses.q_context) document.getElementById('q_context').value = responses.q_context;
   }
 }
 
@@ -2169,7 +2177,7 @@ function setupAutoSave() {
 
 function saveCurrentFields() {
   // Text fields (non-brainstorm, non-assess)
-  ['q3','q_pedagogical','d1','d2','d3','d4','d5','d6','q8_why','q8_how','q9','q10_detail','q11','q12','q13','q14','q15','q16'].forEach(id => {
+  ['q3','q_pedagogical','q_context','d1','d2','d3','d4','d5','d6','q8_why','q8_how','q9','q10_detail','q11','q12','q13','q14','q15','q16'].forEach(id => {
     const el = document.getElementById(id);
     if (el) responses[id] = el.value;
   });
@@ -2191,7 +2199,7 @@ function saveCurrentFields() {
 }
 
 function restoreFields() {
-  ['q3','q_pedagogical','d1','d2','d3','d4','d5','d6','q8_why','q8_how','q9','q10_detail','q11','q12','q13','q14','q15','q16'].forEach(id => {
+  ['q3','q_pedagogical','q_context','d1','d2','d3','d4','d5','d6','q8_why','q8_how','q9','q10_detail','q11','q12','q13','q14','q15','q16'].forEach(id => {
     const el = document.getElementById(id);
     if (el && responses[id]) el.value = responses[id];
   });
@@ -2297,6 +2305,7 @@ function buildSummaryHTML() {
     html += summaryRow('Chosen Idea', sel.text);
     html += summaryRow('Who Benefits', sel.who_benefits);
     html += summaryRow('Existing Tools / Gaps', sel.existing_tool);
+    html += summaryRow('Course/Assignment Context', responses.q_context);
     html += summaryRow('Success Criteria', responses.q3);
   } else {
     html += '<div class="summary-item"><div class="summary-a empty">(no idea selected)</div></div>';
@@ -2387,6 +2396,7 @@ async function submitResponses() {
     selected_idea: sel ? sel.text : '',
     selected_who_benefits: sel ? (sel.who_benefits || '') : '',
     selected_existing_tool: sel ? (sel.existing_tool || '') : '',
+    q_context: responses.q_context || '',
     q3: responses.q3 || '',
     d1: responses.d1 || '',
     d2: responses.d2 || '',
@@ -2463,6 +2473,7 @@ function downloadCSV() {
   rows.push(['Chosen Idea', sel ? sel.text : '']);
   rows.push(['Who Benefits', sel ? (sel.who_benefits || '') : '']);
   rows.push(['Existing Tools / Gaps', sel ? (sel.existing_tool || '') : '']);
+  rows.push(['Course/Assignment Context', responses.q_context || '']);
   rows.push(['Success Criteria', responses.q3 || '']);
 
   rows.push([]);

@@ -112,6 +112,11 @@ Radio options:
 > Pick the one you're most excited about building.
 
 ### After selection
+
+**Label:** In what course, assignment, or teaching situation would this support matter most?
+
+> Helper: Anchor the idea in a specific context where it would make a real difference.
+
 **Label:** What does success look like for this idea? How would you know the tool is working?
 
 - Free text.
