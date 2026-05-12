@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Delegation &amp; Diligence Discussion Tool</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2032%2032'%3E%3Crect%20width%3D'32'%20height%3D'32'%20rx%3D'6'%20fill%3D'%23FFD100'%2F%3E%3Ctext%20x%3D'16'%20y%3D'23'%20font-family%3D'-apple-system%2C%20BlinkMacSystemFont%2C%20Segoe%20UI%2C%20Roboto%2C%20sans-serif'%20font-size%3D'17'%20font-weight%3D'800'%20text-anchor%3D'middle'%20fill%3D'%23000'%3E4D%3C%2Ftext%3E%3C%2Fsvg%3E">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2032%2032'%3E%3Crect%20width%3D'32'%20height%3D'32'%20rx%3D'6'%20fill%3D'%23FFD100'%2F%3E%3Ctext%20x%3D'16'%20y%3D'23'%20font-family%3D'-apple-system%2C%20BlinkMacSystemFont%2C%20Segoe%20UI%2C%20Roboto%2C%20sans-serif'%20font-size%3D'17'%20font-weight%3D'800'%20text-anchor%3D'middle'%20fill%3D'%23000'%3E4D%3C%2Ftext%3E%3C%2Fsvg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2032%2032'%3E%3Crect%20width%3D'32'%20height%3D'32'%20rx%3D'6'%20fill%3D'%236C3FB4'%2F%3E%3Ctext%20x%3D'16'%20y%3D'23'%20font-family%3D'-apple-system%2C%20BlinkMacSystemFont%2C%20Segoe%20UI%2C%20Roboto%2C%20sans-serif'%20font-size%3D'17'%20font-weight%3D'800'%20text-anchor%3D'middle'%20fill%3D'%23FFF'%3E4D%3C%2Ftext%3E%3C%2Fsvg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2032%2032'%3E%3Crect%20width%3D'32'%20height%3D'32'%20rx%3D'6'%20fill%3D'%236C3FB4'%2F%3E%3Ctext%20x%3D'16'%20y%3D'23'%20font-family%3D'-apple-system%2C%20BlinkMacSystemFont%2C%20Segoe%20UI%2C%20Roboto%2C%20sans-serif'%20font-size%3D'17'%20font-weight%3D'800'%20text-anchor%3D'middle'%20fill%3D'%23FFF'%3E4D%3C%2Ftext%3E%3C%2Fsvg%3E">
 <style>
 *, *::before, *::after {
   box-sizing: border-box;
@@ -14,14 +14,20 @@
 }
 
 :root {
-  --gold: #FFD100;
-  --black: #000000;
+  /* Ringling palette */
+  --gold: #6C3FB4;          /* primary brand (formerly gold, now purple) */
+  --gold-dark: #5A2F9F;     /* hover state */
+  --gold-tint: #F3EBFA;     /* selected-state background */
+  --yellow: #FFD100;        /* pop accent (synthesis) */
+  --black: #1F1438;         /* very dark purple text */
   --white: #FFFFFF;
-  --dark-gray: #333333;
-  --light-gray: #F5F5F5;
-  --medium-gray: #E0E0E0;
-  --delegation-blue: #2B6CB0;
-  --diligence-red: #C53030;
+  --dark-gray: #4A3D5F;
+  --light-gray: #F8F5FC;
+  --medium-gray: #DDD2EC;
+  --delegation-blue: #2DD4BF; /* teal/cyan pop */
+  --delegation-tint: #E0F7F4;
+  --diligence-red: #EC4899;   /* magenta/pink pop */
+  --diligence-tint: #FCE7F0;
   --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
@@ -36,12 +42,12 @@ body {
 
 /* Header */
 .header {
-  background: var(--black);
+  background: var(--gold);
   padding: 0;
 }
 .header-bar {
   height: 6px;
-  background: var(--gold);
+  background: var(--yellow);
 }
 .header-content {
   max-width: 720px;
@@ -52,7 +58,7 @@ body {
   gap: 12px;
 }
 .header-logo {
-  color: var(--gold);
+  color: var(--white);
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 2px;
@@ -130,12 +136,12 @@ body {
 .step-item.active .step-circle {
   background: var(--gold);
   border-color: var(--gold);
-  color: var(--black);
+  color: var(--white);
 }
 .step-item.completed .step-circle {
   background: var(--gold);
   border-color: var(--gold);
-  color: var(--black);
+  color: var(--white);
 }
 .step-label {
   margin-top: 6px;
@@ -157,10 +163,10 @@ body {
 }
 .step-item.active .step-accent.accent-delegation { background: var(--delegation-blue); }
 .step-item.active .step-accent.accent-diligence { background: var(--diligence-red); }
-.step-item.active .step-accent.accent-synthesis { background: var(--gold); }
+.step-item.active .step-accent.accent-synthesis { background: var(--yellow); }
 .step-item.completed .step-accent.accent-delegation { background: var(--delegation-blue); opacity: 0.4; }
 .step-item.completed .step-accent.accent-diligence { background: var(--diligence-red); opacity: 0.4; }
-.step-item.completed .step-accent.accent-synthesis { background: var(--gold); opacity: 0.4; }
+.step-item.completed .step-accent.accent-synthesis { background: var(--yellow); opacity: 0.4; }
 
 /* Cards */
 .card {
@@ -204,15 +210,15 @@ body {
   margin-bottom: 8px;
 }
 .section-badge.delegation {
-  background: #EBF4FF;
+  background: var(--delegation-tint);
   color: var(--delegation-blue);
 }
 .section-badge.diligence {
-  background: #FFF5F5;
+  background: var(--diligence-tint);
   color: var(--diligence-red);
 }
 .section-badge.synthesis {
-  background: #FFFDE7;
+  background: #FFF8C9;
   color: #8B6914;
 }
 .section-title {
@@ -301,7 +307,7 @@ textarea.short {
 }
 .radio-option.selected {
   border-color: var(--gold);
-  background: #FFFDE7;
+  background: var(--gold-tint);
 }
 .radio-option input[type="radio"] {
   accent-color: var(--gold);
@@ -319,7 +325,7 @@ textarea.short {
   display: none;
   margin-top: 12px;
   padding: 12px 16px;
-  background: #FFFDE7;
+  background: var(--gold-tint);
   border-left: 4px solid var(--gold);
   border-radius: 0 8px 8px 0;
   font-size: 14px;
@@ -349,7 +355,7 @@ textarea.short {
 }
 .card-select.selected {
   border-color: var(--gold);
-  background: #FFFDE7;
+  background: var(--gold-tint);
   box-shadow: 0 0 0 3px rgba(255,209,0,0.15);
 }
 .card-select-title {
@@ -398,10 +404,10 @@ textarea.short {
 }
 .btn-primary {
   background: var(--gold);
-  color: var(--black);
+  color: var(--white);
 }
 .btn-primary:hover {
-  background: #E6BC00;
+  background: var(--gold-dark);
 }
 .btn-primary:disabled {
   background: var(--medium-gray);
@@ -470,7 +476,7 @@ textarea.short {
 }
 .idea-remove:hover {
   color: var(--diligence-red);
-  background: #FFF5F5;
+  background: var(--diligence-tint);
 }
 .add-idea-btn {
   display: inline-flex;
@@ -490,7 +496,7 @@ textarea.short {
 }
 .add-idea-btn:hover {
   border-color: var(--delegation-blue);
-  background: #EBF4FF;
+  background: var(--delegation-tint);
 }
 .add-idea-btn:disabled {
   color: #bbb;
@@ -567,7 +573,7 @@ textarea.short {
   height: 28px;
   border-radius: 50%;
   background: var(--gold);
-  color: var(--black);
+  color: var(--white);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -599,7 +605,7 @@ textarea.short {
 .rank-item.dragging {
   opacity: 0.4;
   border-color: var(--gold);
-  background: #FFFDE7;
+  background: var(--gold-tint);
 }
 .rank-item.drag-over {
   border-color: var(--gold);
@@ -656,7 +662,7 @@ textarea.short {
 }
 .choose-option.selected {
   border-color: var(--gold);
-  background: #FFFDE7;
+  background: var(--gold-tint);
 }
 .choose-option input[type="radio"] {
   accent-color: var(--gold);
@@ -684,8 +690,8 @@ textarea.short {
 .selected-idea-banner {
   display: none;
   padding: 14px 18px;
-  background: #EBF4FF;
-  border-left: 4px solid var(--delegation-blue);
+  background: var(--gold-tint);
+  border-left: 4px solid var(--gold);
   border-radius: 0 10px 10px 0;
   margin-bottom: 28px;
 }
@@ -697,7 +703,7 @@ textarea.short {
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: var(--delegation-blue);
+  color: var(--gold);
   margin-bottom: 4px;
 }
 .selected-idea-banner-text {
@@ -829,14 +835,14 @@ textarea.short {
 }
 .phase-card:hover {
   border-color: var(--gold);
-  background: #FFFDE7;
+  background: var(--gold-tint);
 }
 .phase-card-number {
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: var(--delegation-blue);
+  color: var(--gold);
   margin-bottom: 4px;
 }
 .phase-card-title {
@@ -2731,8 +2737,8 @@ function buildDocumentHTML({ phase, name, department, email, submitted, sections
   }
   header.doc-header {
     border-top: 6px solid #FFD100;
-    background: #000;
-    color: #FFD100;
+    background: #6C3FB4;
+    color: #fff;
     padding: 14px 24px;
     margin: -40px -32px 32px;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -2744,12 +2750,12 @@ function buildDocumentHTML({ phase, name, department, email, submitted, sections
   h1 {
     font-size: 26px;
     margin: 0 0 4px;
-    color: #000;
+    color: #1F1438;
   }
   .phase-tag {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-size: 13px;
-    color: #2B6CB0;
+    color: #6C3FB4;
     font-weight: 700;
     letter-spacing: 1px;
     text-transform: uppercase;
@@ -2770,13 +2776,13 @@ function buildDocumentHTML({ phase, name, department, email, submitted, sections
     padding-left: 16px;
     border-left: 4px solid #ddd;
   }
-  section.delegation { border-left-color: #2B6CB0; }
-  section.diligence  { border-left-color: #C53030; }
+  section.delegation { border-left-color: #2DD4BF; }
+  section.diligence  { border-left-color: #EC4899; }
   section.synthesis  { border-left-color: #FFD100; }
   h2 {
     font-size: 18px;
     margin: 0 0 14px;
-    color: #000;
+    color: #1F1438;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
   .qa { margin-bottom: 18px; }
