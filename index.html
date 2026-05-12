@@ -1174,6 +1174,12 @@ textarea.short {
         <textarea id="q8_how"></textarea>
       </div>
 
+      <div class="field-group" id="q8-roles-section" style="display:none;">
+        <label class="field-label" for="q8_roles">What should the AI do, what must the student do, and what must the instructor still do?</label>
+        <span class="field-helper">Be specific about each role. Where does AI stop and human judgment take over?</span>
+        <textarea id="q8_roles" class="large"></textarea>
+      </div>
+
       <div class="btn-row">
         <button class="btn btn-secondary" onclick="goToScreen(5)">Back</button>
         <button class="btn btn-primary" onclick="goToScreen(7)">Next: Creation Diligence &rarr;</button>
@@ -2128,6 +2134,7 @@ function selectCard(el) {
 function showQ8Followup(mode) {
   const followup = document.getElementById('q8-followup');
   const howSection = document.getElementById('q8-how-section');
+  const rolesSection = document.getElementById('q8-roles-section');
   const label = document.getElementById('q8-followup-label');
   const helper = document.getElementById('q8-followup-helper');
 
@@ -2152,10 +2159,12 @@ function showQ8Followup(mode) {
     helper.textContent = p.helper;
     followup.style.display = '';
     howSection.style.display = '';
+    rolesSection.style.display = '';
 
     // Restore saved values if any
     if (responses.q8_why) document.getElementById('q8_why').value = responses.q8_why;
     if (responses.q8_how) document.getElementById('q8_how').value = responses.q8_how;
+    if (responses.q8_roles) document.getElementById('q8_roles').value = responses.q8_roles;
   }
 }
 
@@ -2177,7 +2186,7 @@ function setupAutoSave() {
 
 function saveCurrentFields() {
   // Text fields (non-brainstorm, non-assess)
-  ['q3','q_pedagogical','q_context','d1','d2','d3','d4','d5','d6','q8_why','q8_how','q9','q10_detail','q11','q12','q13','q14','q15','q16'].forEach(id => {
+  ['q3','q_pedagogical','q_context','d1','d2','d3','d4','d5','d6','q8_why','q8_how','q8_roles','q9','q10_detail','q11','q12','q13','q14','q15','q16'].forEach(id => {
     const el = document.getElementById(id);
     if (el) responses[id] = el.value;
   });
@@ -2199,7 +2208,7 @@ function saveCurrentFields() {
 }
 
 function restoreFields() {
-  ['q3','q_pedagogical','q_context','d1','d2','d3','d4','d5','d6','q8_why','q8_how','q9','q10_detail','q11','q12','q13','q14','q15','q16'].forEach(id => {
+  ['q3','q_pedagogical','q_context','d1','d2','d3','d4','d5','d6','q8_why','q8_how','q8_roles','q9','q10_detail','q11','q12','q13','q14','q15','q16'].forEach(id => {
     const el = document.getElementById(id);
     if (el && responses[id]) el.value = responses[id];
   });
@@ -2334,6 +2343,7 @@ function buildSummaryHTML() {
   html += summaryRow('AI Mode', responses.q8);
   html += summaryRow('Why This Mode', responses.q8_why);
   html += summaryRow('How It Would Work', responses.q8_how);
+  html += summaryRow('Role Distribution (AI/Student/Instructor)', responses.q8_roles);
   html += '</div>';
 
   // Creation Diligence
@@ -2410,6 +2420,7 @@ async function submitResponses() {
     q8: responses.q8 || '',
     q8_why: responses.q8_why || '',
     q8_how: responses.q8_how || '',
+    q8_roles: responses.q8_roles || '',
     q9: responses.q9 || '',
     q10: responses.q10 || '',
     q10_detail: responses.q10_detail || '',
@@ -2496,6 +2507,7 @@ function downloadCSV() {
   rows.push(['AI Mode', responses.q8 || '']);
   rows.push(['Why This Mode', responses.q8_why || '']);
   rows.push(['How It Would Work', responses.q8_how || '']);
+  rows.push(['Role Distribution (AI/Student/Instructor)', responses.q8_roles || '']);
 
   rows.push([]);
   rows.push(['--- CREATION DILIGENCE ---', '']);

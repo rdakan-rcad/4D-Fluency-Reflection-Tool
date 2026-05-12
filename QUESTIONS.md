@@ -232,6 +232,10 @@ Helper text varies by mode:
 
 > Helper: Walk through the experience: what does the user do, what does the tool do, and where does AI come in?
 
+**What should the AI do, what must the student do, and what must the instructor still do?**
+
+> Helper: Be specific about each role. Where does AI stop and human judgment take over?
+
 ---
 
 ## Step 7: Creation Diligence
