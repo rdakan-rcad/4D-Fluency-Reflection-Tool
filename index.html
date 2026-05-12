@@ -1348,7 +1348,8 @@ textarea.short {
       <div id="summaryFinal"></div>
 
       <div class="btn-group" style="margin-top:24px;">
-        <button class="btn btn-primary" onclick="downloadCSV()">Download My Responses (CSV)</button>
+        <button class="btn btn-primary" onclick="downloadDocument()">Download My Responses</button>
+        <button class="btn btn-outline" onclick="downloadCSV()">Download CSV (data)</button>
         <button class="btn btn-outline" onclick="startOver()">Start Over</button>
       </div>
     </div>
@@ -1606,7 +1607,8 @@ textarea.short {
       <div id="p2SummaryFinal"></div>
 
       <div class="btn-group" style="margin-top:24px;">
-        <button class="btn btn-primary" onclick="p2DownloadCSV()">Download My Responses (CSV)</button>
+        <button class="btn btn-primary" onclick="p2DownloadDocument()">Download My Responses</button>
+        <button class="btn btn-outline" onclick="p2DownloadCSV()">Download CSV (data)</button>
         <button class="btn btn-outline" onclick="p2StartOver()">Start Over</button>
       </div>
     </div>
@@ -2551,6 +2553,287 @@ async function submitResponses() {
 }
 
 // =============================================================
+// Document Download (Phase 1) — readable HTML
+// =============================================================
+function downloadDocument() {
+  const sel = getSelectedIdea();
+  const submittedDate = responses.timestamp
+    ? new Date(responses.timestamp).toLocaleString()
+    : new Date().toLocaleString();
+
+  const sections = [];
+
+  // Brainstorm
+  const ideasList = responses.ideas
+    .filter(i => i.text.trim())
+    .map((idea, idx) => `<li><strong>${escapeHTML(idea.text)}</strong>${idea.who_benefits ? ` <em style="color:#666;">(Benefits: ${escapeHTML(idea.who_benefits)})</em>` : ''}${idea.existing_tool ? `<br><span style="color:#555;">Existing tool / gap: ${escapeHTML(idea.existing_tool)}</span>` : ''}</li>`)
+    .join('');
+  sections.push({
+    title: 'Brainstorm',
+    color: 'delegation',
+    items: [
+      { label: 'All Ideas', html: ideasList ? `<ol>${ideasList}</ol>` : '<em>(none entered)</em>' },
+      { label: 'Pedagogical Improvement', text: responses.q_pedagogical },
+    ],
+  });
+
+  // Selected Idea
+  sections.push({
+    title: 'Selected Idea',
+    color: 'delegation',
+    items: [
+      { label: 'Chosen Idea', text: sel ? sel.text : '' },
+      { label: 'Who Benefits', text: sel ? sel.who_benefits : '' },
+      { label: 'Existing Tools / Gaps', text: sel ? sel.existing_tool : '' },
+      { label: 'Course / Assignment Context', text: responses.q_context },
+      { label: 'Success Criteria', text: responses.q3 },
+    ],
+  });
+
+  // Discernment
+  sections.push({
+    title: 'Discernment',
+    color: 'delegation',
+    items: [
+      { label: 'What an excellent version looks like', text: responses.d1 },
+      { label: 'What a mediocre version looks like', text: responses.d2 },
+      { label: 'What failure looks like', text: responses.d3 },
+      { label: 'What you would check first', text: responses.d4 },
+      { label: 'Hardest for AI to get right', text: responses.d5 },
+      { label: 'Signs the tool is making your work worse', text: responses.d6 },
+    ],
+  });
+
+  // Tool Awareness
+  sections.push({
+    title: 'Tool Awareness',
+    color: 'delegation',
+    items: [
+      { label: 'Student data required', text: responses.q5 },
+      { label: 'LMS integration', text: responses.q6 },
+      { label: 'Technical complexity', text: responses.q7 },
+    ],
+  });
+
+  // Task Delegation
+  sections.push({
+    title: 'Task Delegation',
+    color: 'delegation',
+    items: [
+      { label: 'AI Mode', text: responses.q8 },
+      { label: 'Why this mode fits', text: responses.q8_why },
+      { label: 'How it would work in practice', text: responses.q8_how },
+      { label: 'Role distribution (AI / student / instructor)', text: responses.q8_roles },
+    ],
+  });
+
+  // System Prompt
+  sections.push({
+    title: 'System Prompt',
+    color: 'delegation',
+    items: [
+      { label: 'System prompt / behavioral logic', text: responses.q_system_prompt },
+    ],
+  });
+
+  // Creation Diligence
+  const creationItems = [
+    { label: 'Data needed', text: responses.q9 },
+    { label: 'Privacy concerns', text: responses.q10 },
+  ];
+  if (responses.q10 === 'Yes' || responses.q10 === 'Not sure') {
+    creationItems.push({ label: 'Privacy detail', text: responses.q10_detail });
+  }
+  creationItems.push({ label: 'Who to consult', text: responses.q11 });
+  creationItems.push({ label: 'AI prohibitions', text: responses.q_prohibited });
+  sections.push({ title: 'Creation Diligence', color: 'diligence', items: creationItems });
+
+  // Transparency Diligence
+  sections.push({
+    title: 'Transparency Diligence',
+    color: 'diligence',
+    items: [
+      { label: 'How the tool works (in plain language)', text: responses.q12 },
+      { label: "Tool's limitations", text: responses.q13 },
+    ],
+  });
+
+  // Deployment Diligence
+  sections.push({
+    title: 'Deployment Diligence',
+    color: 'diligence',
+    items: [
+      { label: 'Worst-case bad output', text: responses.q14 },
+      { label: 'Success in your teaching practice', text: responses.q_teaching_success },
+      { label: 'Testing plan', text: responses.q15 },
+      { label: 'Hardest to translate from intuition', text: responses.q_hardest_translation },
+    ],
+  });
+
+  // Synthesis
+  sections.push({
+    title: 'Tool Concept',
+    color: 'synthesis',
+    items: [
+      { label: 'One-sentence concept', text: responses.q16 },
+    ],
+  });
+
+  const html = buildDocumentHTML({
+    phase: 'Phase 1: Brainstorming & Planning',
+    name: responses.name || '',
+    department: responses.department || '',
+    email: '',
+    submitted: submittedDate,
+    sections,
+  });
+
+  const filename = `4D_Tool_${(responses.name || 'responses').replace(/\s+/g, '_')}.html`;
+  triggerDownload(html, filename, 'text/html;charset=utf-8;');
+}
+
+// =============================================================
+// Shared document builders
+// =============================================================
+function buildDocumentHTML({ phase, name, department, email, submitted, sections }) {
+  const sectionsHTML = sections.map(s => {
+    const itemsHTML = s.items.map(it => {
+      const body = it.html
+        ? it.html
+        : (it.text && String(it.text).trim()
+            ? `<div class="answer">${escapeHTML(String(it.text)).replace(/\n/g, '<br>')}</div>`
+            : `<div class="answer empty">(not answered)</div>`);
+      return `<div class="qa"><div class="q">${escapeHTML(it.label)}</div>${body}</div>`;
+    }).join('');
+    return `<section class="${s.color}">
+      <h2>${escapeHTML(s.title)}</h2>
+      ${itemsHTML}
+    </section>`;
+  }).join('');
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>4D Workshop Responses — ${escapeHTML(name || 'Participant')}</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: Georgia, "Times New Roman", serif;
+    color: #222;
+    line-height: 1.55;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 40px 32px 80px;
+    background: #fff;
+  }
+  header.doc-header {
+    border-top: 6px solid #FFD100;
+    background: #000;
+    color: #FFD100;
+    padding: 14px 24px;
+    margin: -40px -32px 32px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  h1 {
+    font-size: 26px;
+    margin: 0 0 4px;
+    color: #000;
+  }
+  .phase-tag {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 13px;
+    color: #2B6CB0;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .meta {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 36px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #ddd;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  .meta div { margin-bottom: 2px; }
+  .meta strong { color: #333; margin-right: 8px; }
+  section {
+    margin-bottom: 36px;
+    padding-left: 16px;
+    border-left: 4px solid #ddd;
+  }
+  section.delegation { border-left-color: #2B6CB0; }
+  section.diligence  { border-left-color: #C53030; }
+  section.synthesis  { border-left-color: #FFD100; }
+  h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+    color: #000;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  .qa { margin-bottom: 18px; }
+  .qa:last-child { margin-bottom: 0; }
+  .q {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #555;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .answer {
+    font-size: 15px;
+    color: #222;
+    white-space: pre-wrap;
+  }
+  .answer.empty {
+    color: #aaa;
+    font-style: italic;
+  }
+  ol, ul { padding-left: 22px; margin: 8px 0; }
+  ol li, ul li { margin-bottom: 8px; font-size: 15px; }
+  @media print {
+    body { padding: 0; max-width: none; }
+    header.doc-header { margin: 0 0 24px; }
+    section { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<header class="doc-header">Ringling College of Art + Design</header>
+<h1>Delegation &amp; Diligence Discussion Tool</h1>
+<div class="phase-tag">${escapeHTML(phase)}</div>
+<div class="meta">
+  ${name ? `<div><strong>Name:</strong>${escapeHTML(name)}</div>` : ''}
+  ${email ? `<div><strong>Email:</strong>${escapeHTML(email)}</div>` : ''}
+  ${department ? `<div><strong>Department:</strong>${escapeHTML(department)}</div>` : ''}
+  <div><strong>Submitted:</strong>${escapeHTML(submitted)}</div>
+</div>
+${sectionsHTML}
+</body>
+</html>`;
+}
+
+function triggerDownload(content, filename, mimeType) {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// =============================================================
 // CSV Download
 // =============================================================
 function downloadCSV() {
@@ -3031,6 +3314,45 @@ async function p2Submit() {
   p2GoToScreen('p2-confirmation');
   btn.disabled = false;
   btn.textContent = 'Submit Responses';
+}
+
+// --- P2 Document Download ---
+function p2DownloadDocument() {
+  const submittedDate = p2Responses.timestamp
+    ? new Date(p2Responses.timestamp).toLocaleString()
+    : new Date().toLocaleString();
+
+  // Group P2 questions by section
+  const sectionMap = {};
+  P2_QUESTIONS.forEach(q => {
+    if (!sectionMap[q.section]) sectionMap[q.section] = [];
+    sectionMap[q.section].push({ label: q.label, text: p2Responses[q.key] });
+  });
+
+  // Map section names to colors
+  function colorFor(section) {
+    if (section.includes('Diligence')) return 'diligence';
+    if (section === 'Next Steps' || section.includes('Governance')) return 'synthesis';
+    return 'delegation';
+  }
+
+  const sections = Object.keys(sectionMap).map(name => ({
+    title: name,
+    color: colorFor(name),
+    items: sectionMap[name],
+  }));
+
+  const html = buildDocumentHTML({
+    phase: 'Phase 2: Reflection & Next Steps',
+    name: p2Responses.name || '',
+    department: p2Responses.department || '',
+    email: p2Responses.email || '',
+    submitted: submittedDate,
+    sections,
+  });
+
+  const filename = `4D_Tool_Phase2_${(p2Responses.name || 'responses').replace(/\s+/g, '_')}.html`;
+  triggerDownload(html, filename, 'text/html;charset=utf-8;');
 }
 
 // --- P2 CSV ---
