@@ -278,6 +278,10 @@ Helper text varies by mode:
 
 > Helper: Think about IT, administration, department heads, IRB, legal, or students themselves.
 
+### Q4. List anything the AI is strictly prohibited from doing.
+
+> Helper: Hard limits and refusals. What outputs, topics, behaviors, or actions must this tool never produce, regardless of how the user prompts it?
+
 ---
 
 ## Step 9: Transparency Diligence

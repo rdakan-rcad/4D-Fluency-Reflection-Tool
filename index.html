@@ -1239,6 +1239,12 @@ textarea.short {
         <textarea id="q11"></textarea>
       </div>
 
+      <div class="field-group">
+        <label class="field-label" for="q_prohibited">List anything the AI is strictly prohibited from doing.</label>
+        <span class="field-helper">Hard limits and refusals. What outputs, topics, behaviors, or actions must this tool never produce, regardless of how the user prompts it?</span>
+        <textarea id="q_prohibited" class="large"></textarea>
+      </div>
+
       <div class="btn-row">
         <button class="btn btn-secondary" onclick="goToScreen(7)">Back</button>
         <button class="btn btn-primary" onclick="goToScreen(9)">Next: Transparency Diligence &rarr;</button>
@@ -2207,7 +2213,7 @@ function setupAutoSave() {
 
 function saveCurrentFields() {
   // Text fields (non-brainstorm, non-assess)
-  ['q3','q_pedagogical','q_context','d1','d2','d3','d4','d5','d6','q8_why','q8_how','q8_roles','q_system_prompt','q9','q10_detail','q11','q12','q13','q14','q15','q16'].forEach(id => {
+  ['q3','q_pedagogical','q_context','d1','d2','d3','d4','d5','d6','q8_why','q8_how','q8_roles','q_system_prompt','q9','q10_detail','q11','q_prohibited','q12','q13','q14','q15','q16'].forEach(id => {
     const el = document.getElementById(id);
     if (el) responses[id] = el.value;
   });
@@ -2229,7 +2235,7 @@ function saveCurrentFields() {
 }
 
 function restoreFields() {
-  ['q3','q_pedagogical','q_context','d1','d2','d3','d4','d5','d6','q8_why','q8_how','q8_roles','q_system_prompt','q9','q10_detail','q11','q12','q13','q14','q15','q16'].forEach(id => {
+  ['q3','q_pedagogical','q_context','d1','d2','d3','d4','d5','d6','q8_why','q8_how','q8_roles','q_system_prompt','q9','q10_detail','q11','q_prohibited','q12','q13','q14','q15','q16'].forEach(id => {
     const el = document.getElementById(id);
     if (el && responses[id]) el.value = responses[id];
   });
@@ -2380,6 +2386,7 @@ function buildSummaryHTML() {
     html += summaryRow('Privacy Detail', responses.q10_detail);
   }
   html += summaryRow('Who to Consult', responses.q11);
+  html += summaryRow('AI Prohibitions', responses.q_prohibited);
   html += '</div>';
 
   // Transparency
@@ -2452,6 +2459,7 @@ async function submitResponses() {
     q10: responses.q10 || '',
     q10_detail: responses.q10_detail || '',
     q11: responses.q11 || '',
+    q_prohibited: responses.q_prohibited || '',
     q12: responses.q12 || '',
     q13: responses.q13 || '',
     q14: responses.q14 || '',
@@ -2546,6 +2554,7 @@ function downloadCSV() {
   rows.push(['Privacy Concerns', responses.q10 || '']);
   rows.push(['Privacy Detail', responses.q10_detail || '']);
   rows.push(['Who to Consult', responses.q11 || '']);
+  rows.push(['AI Prohibitions', responses.q_prohibited || '']);
 
   rows.push([]);
   rows.push(['--- TRANSPARENCY DILIGENCE ---', '']);
