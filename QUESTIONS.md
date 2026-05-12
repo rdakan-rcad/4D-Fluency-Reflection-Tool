@@ -312,9 +312,17 @@ Helper text varies by mode:
 
 > Helper: This isn't meant to scare you — it's meant to help you think about where human oversight matters most.
 
-### Q2. How would you test whether this tool is working correctly?
+### Q2. What would count as success in your teaching practice?
+
+> Helper: Beyond the tool itself: what change in your teaching, your students' learning, or your professional practice would tell you this was worth doing?
+
+### Q3. How would you test whether this tool is working correctly?
 
 > Helper: What would you check? Who would you ask to try it? What inputs would stress-test it?
+
+### Q4. What was hardest to translate from your professional intuition into specific language?
+
+> Helper: Look back across all your answers. Where did you struggle to articulate something you know in your bones? What does that tell you about working with AI?
 
 ---
 

@@ -1292,9 +1292,21 @@ textarea.short {
       </div>
 
       <div class="field-group">
+        <label class="field-label" for="q_teaching_success">What would count as success in your teaching practice?</label>
+        <span class="field-helper">Beyond the tool itself: what change in your teaching, your students' learning, or your professional practice would tell you this was worth doing?</span>
+        <textarea id="q_teaching_success"></textarea>
+      </div>
+
+      <div class="field-group">
         <label class="field-label" for="q15">How would you test whether this tool is working correctly?</label>
         <span class="field-helper">What would you check? Who would you ask to try it? What inputs would stress-test it?</span>
         <textarea id="q15"></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="q_hardest_translation">What was hardest to translate from your professional intuition into specific language?</label>
+        <span class="field-helper">Look back across all your answers. Where did you struggle to articulate something you know in your bones? What does that tell you about working with AI?</span>
+        <textarea id="q_hardest_translation" class="large"></textarea>
       </div>
 
       <div class="btn-row">
@@ -2213,7 +2225,7 @@ function setupAutoSave() {
 
 function saveCurrentFields() {
   // Text fields (non-brainstorm, non-assess)
-  ['q3','q_pedagogical','q_context','d1','d2','d3','d4','d5','d6','q8_why','q8_how','q8_roles','q_system_prompt','q9','q10_detail','q11','q_prohibited','q12','q13','q14','q15','q16'].forEach(id => {
+  ['q3','q_pedagogical','q_context','d1','d2','d3','d4','d5','d6','q8_why','q8_how','q8_roles','q_system_prompt','q9','q10_detail','q11','q_prohibited','q12','q13','q14','q_teaching_success','q15','q_hardest_translation','q16'].forEach(id => {
     const el = document.getElementById(id);
     if (el) responses[id] = el.value;
   });
@@ -2235,7 +2247,7 @@ function saveCurrentFields() {
 }
 
 function restoreFields() {
-  ['q3','q_pedagogical','q_context','d1','d2','d3','d4','d5','d6','q8_why','q8_how','q8_roles','q_system_prompt','q9','q10_detail','q11','q_prohibited','q12','q13','q14','q15','q16'].forEach(id => {
+  ['q3','q_pedagogical','q_context','d1','d2','d3','d4','d5','d6','q8_why','q8_how','q8_roles','q_system_prompt','q9','q10_detail','q11','q_prohibited','q12','q13','q14','q_teaching_success','q15','q_hardest_translation','q16'].forEach(id => {
     const el = document.getElementById(id);
     if (el && responses[id]) el.value = responses[id];
   });
@@ -2398,7 +2410,9 @@ function buildSummaryHTML() {
   // Deployment
   html += '<div class="summary-section"><div class="summary-section-title diligence">Deployment Diligence</div>';
   html += summaryRow('Worst Case', responses.q14);
+  html += summaryRow('Success in Teaching Practice', responses.q_teaching_success);
   html += summaryRow('Testing Plan', responses.q15);
+  html += summaryRow('Hardest to Translate', responses.q_hardest_translation);
   html += '</div>';
 
   // Synthesis
@@ -2463,7 +2477,9 @@ async function submitResponses() {
     q12: responses.q12 || '',
     q13: responses.q13 || '',
     q14: responses.q14 || '',
+    q_teaching_success: responses.q_teaching_success || '',
     q15: responses.q15 || '',
+    q_hardest_translation: responses.q_hardest_translation || '',
     q16: responses.q16 || '',
   };
 
@@ -2564,7 +2580,9 @@ function downloadCSV() {
   rows.push([]);
   rows.push(['--- DEPLOYMENT DILIGENCE ---', '']);
   rows.push(['Worst Case', responses.q14 || '']);
+  rows.push(['Success in Teaching Practice', responses.q_teaching_success || '']);
   rows.push(['Testing Plan', responses.q15 || '']);
+  rows.push(['Hardest to Translate', responses.q_hardest_translation || '']);
 
   rows.push([]);
   rows.push(['--- SYNTHESIS ---', '']);

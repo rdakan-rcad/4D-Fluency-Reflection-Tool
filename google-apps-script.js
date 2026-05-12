@@ -69,7 +69,9 @@ function handlePhase1(ss, data) {
       'How It Works',
       'Limitations',
       'Worst Case',
+      'Success in Teaching Practice',
       'Testing Plan',
+      'Hardest to Translate',
       'Tool Concept'
     ]);
   }
@@ -107,7 +109,9 @@ function handlePhase1(ss, data) {
     data.q12                    || '',
     data.q13                    || '',
     data.q14                    || '',
+    data.q_teaching_success     || '',
     data.q15                    || '',
+    data.q_hardest_translation  || '',
     data.q16                    || ''
   ]);
 }
